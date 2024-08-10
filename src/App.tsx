@@ -40,11 +40,11 @@ function App() {
         <button onClick={() => setfirstform(!firstform)}>Create form</button>
         {firstform ? (
           <Formbox
-
+            setfirstform={setfirstform}
             formtitle={[
               {
                 title: "Form-Builder",
-                className: ["text-2xl "]
+                className: ["text-2xl  "]
               }
             ]}
             textfield={[
