@@ -17,7 +17,7 @@ function App() {
   const handleConfirm = (confirm: boolean) => {
     console.log(confirm, productId)
     if (confirm && productId) {
-      console.log(" We got both of them. Hurrah! ");
+      console.log(" We got both of them. Hurrah! 🏆 ");
     }
     setsecondform(false)
   }
