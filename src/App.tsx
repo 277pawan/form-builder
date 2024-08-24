@@ -8,16 +8,23 @@ function App() {
   const [count, setCount] = useState(0);
   const [firstform, setfirstform] = useState<boolean>(false);
   const [secondform, setsecondform] = useState<boolean>(false);
+  const [productId, setproductId] = useState<string>("")
   // const [secondform, setsecondform] = useState<Boolean>(false);
   const handlesubmit = (data: any, e: React.MouseEvent) => {
     e.preventDefault();
     console.log(data)
   }
-  const handleConfirm = (data: boolean, e: React.MouseEvent, value: string) => {
-    e.preventDefault();
-    console.log(value)
-    console.log(data)
+  const handleConfirm = (confirm: boolean) => {
+    console.log(confirm, productId)
+    if (confirm && productId) {
+      console.log(" We got both of them. Hurrah! ");
+    }
     setsecondform(false)
+  }
+  const Deletefunc = (e: React.MouseEvent, productid: string) => {
+    e.preventDefault();
+    setsecondform(!secondform)
+    setproductId(productid)
   }
   return (
     <>
@@ -29,7 +36,6 @@ function App() {
           <img src={reactLogo} className="logo react" alt="React logo" />
         </a>
       </div>
-      <button onClick={(e) => handleConfirm(true, e, "sajdksa")}>Function</button>
       <h1>Vite + React</h1>
       <div className="card">
         <button onClick={() => setCount((count) => count + 1)}>
@@ -89,7 +95,7 @@ function App() {
         ) : (
           ""
         )}
-        <button onClick={() => setsecondform(!secondform)}>Create Second form</button>
+        <button onClick={(e) => Deletefunc(e, "Pawan_Bisht")}>Create Second form</button>
         {secondform ? (
           <Formbox
             formtoogle={setsecondform}
@@ -103,13 +109,13 @@ function App() {
               name: "Ok",
               label: "Confirm",
               type: "ok",
-              function: (e) => handleConfirm(true, e),
+              function: () => handleConfirm(true),
               className: ["bg-red-600"]
             }, {
               name: "Cancel",
               label: "Cancel",
               type: "cancel",
-              function: (e) => handleConfirm(false, e),
+              function: () => handleConfirm(false),
               className: ["text-red-600 border-1 border-red-600 bg-gray-100 hover:border-red-600 "]
             }]}
           />

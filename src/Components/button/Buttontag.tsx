@@ -5,12 +5,11 @@ interface Props {
     setformdata: React.Dispatch<React.SetStateAction<{ [key: string]: any }>>;
     initialFormData: { [key: string]: any };
     className: string[] | undefined;
-    action: (e: React.MouseEvent) => void;
+    action: (data: any, e: React.MouseEvent) => void;
 }
 
 function Buttontag(props: Props) {
     const { action, value, setformdata, initialFormData, className } = props;
-    console.log(action)
 
     const handleResetFn = (e: React.MouseEvent) => {
         e.preventDefault();
@@ -35,11 +34,11 @@ function Buttontag(props: Props) {
             }
             {
                 value.type === 'ok' &&
-                <button className={className ? className.join("") : "mt-2 text-md tracking-wide bg-[#0878ce] hover:bg-[#2a6898] m-auto"} onClick={(e) => action(e)}>Yes</button>
+                <button className={className ? className.join("") : "mt-2 text-md tracking-wide bg-[#0878ce] hover:bg-[#2a6898] m-auto"} onClick={(e) => action(true, e)}>Yes</button>
             }
             {
                 value.type === 'cancel' &&
-                <button className={className ? className.join("") : "mt-2 text-md font-medium text-[#3089cd] bg-gray-200 tracking-wide"} onClick={(e) => action(e)}>Cancel</button>
+                <button className={className ? className.join("") : "mt-2 text-md font-medium text-[#3089cd] bg-gray-200 tracking-wide"} onClick={(e) => action(false, e)}>Cancel</button>
             }
         </>
     );

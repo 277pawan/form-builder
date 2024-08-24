@@ -20,7 +20,6 @@ function Inputtag(props: Props) {
     const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         onChange(name, event.target.value);
     };
-    console.log(textfield)
 
     return (
         <>

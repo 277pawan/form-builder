@@ -1,14 +1,21 @@
 {
-  "name": "reactform",
-  "private": true,
-  "version": "0.0.0",
-  "type": "module",
+  "name": "reactform-builder",
+  "version": "1.0.0",
+  "description": "A reusable form builder component for React",
+  "type":"module",
+  "main": "dist/index.js",
+  "module": "dist/index.esm.js",
+  "types": "dist/index.d.ts", 
+  "files": [
+    "dist"
+  ],
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview"
   },
+  "author": "Pawan Bisht",
   "dependencies": {
     "autoprefixer": "^10.4.19",
     "postcss": "^8.4.39",
