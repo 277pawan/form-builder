@@ -3,7 +3,6 @@
 [![GitHub Repo](https://github.githubassets.com/favicons/favicon.png) **React-form-toaster**](https://github.com/277pawan/form-builder)
 
 ![User-Form](https://cure-ten.vercel.app/static/media/firstform.b6075305bf63a34699f8.gif)
-
 ![Confirmation-form](https://cure-ten.vercel.app/static/media/confirm.4b962f1dee5f2bc649cd.png)
 
 🎊 React-Form-Toaster is a powerful and flexible library designed for creating dynamic forms in React with ease. Users can quickly generate complex forms by simply defining input types, buttons, and other elements, without needing to create each element separately.
@@ -23,8 +22,26 @@ $ yarn add react-form-toaster
 - Default Form UI: Comes with a beautifully designed default form UI that you can use as-is or customize further to match your design requirements.
 - Form Validation and Error Handling: Easily define required fields and validate user input with built-in error handling and custom validation functions.🍃
 - Responsive Design: Fully responsive, making it easy to create forms that look great on any device.
-- Animation and Effects: Easily apply animations, such as swipe to close, using your favorite libraries like animate.css.
+- Animation and Effects: Easily apply animations, such as click outside the box to close the form.
 - Fully Customizable Forms: Provides the flexibility to design forms with custom classes and styles, ensuring they match your application's theme.😱
+
+### Quick Setup
+
+```javascript
+import React from "react";
+import ReactDOM from "react-dom/client";
+import App from "./App.tsx";
+import "./index.css";
+import reportWebVitals from "./reportWebVitals";
+const root = ReactDOM.createRoot(document.getElementById("root"));
+root.render(
+  <React.StrictMode>
+    <App />
+  </React.StrictMode>
+);
+```
+
+> Note: It is important to import index.css after App.tsx to ensure that all styles are correctly applied. This ensures that any global styles are loaded after the component has been imported.
 
 ### User-Forms
 
