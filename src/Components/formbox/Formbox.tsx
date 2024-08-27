@@ -88,7 +88,7 @@ function Formbox(props: Props) {
       <div ref={formref} className="relative z-10 bg-white p-6 rounded shadow-lg w-full max-w-lg mx-4">
         <form onSubmit={handleSubmitFn}>
           {formtitle && formtitle.map((data, index) => (
-            <div key={index} className={data.className ? data.className.join(' ') : "text-2xl font-bold"}>
+            <div key={index} className={data.className ? data.className.join(' ') : "text-black text-2xl font-bold"}>
               {data.title}
             </div>
           ))}

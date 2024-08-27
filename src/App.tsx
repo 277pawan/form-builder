@@ -58,7 +58,7 @@ function App() {
             formtitle={[
               {
                 title: "Form-Builder",
-                className: ["text-2xl font-bold "]
+                className: ["text-2xl font-bold text-black "]
               }
             ]}
             textfield={[

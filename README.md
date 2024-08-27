@@ -116,14 +116,14 @@ const handlesubmit = (data: any, e: React.MouseEvent) => {
  name: "Cancel",
  label: "Cancel",
  type: "cancel",
- function: () => handleConfirm(false),
+ function: () => handleConfirm(false,200),
  className: ["text-red-600 border-1 border-red-600 bg-gray-100 hover:border-red-600 "]
  }]}
  />
 ```
 
 ```javascript
-const handleConfirm = (confirm: boolean) => {
+const handleConfirm = (confirm: boolean, productId: number) => {
   console.log(confirm, productId);
   if (confirm && productId) {
     console.log(" We got both of them. Hurrah! 🏆 ");
