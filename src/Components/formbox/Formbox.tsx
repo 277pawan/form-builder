@@ -93,7 +93,7 @@ function Formbox(props: Props) {
             </div>
           ))}
           {formmessage && (
-            <div className="my-4 text-sm text-gray-700">
+            <div className="my-2 text-sm text-white">
               {formmessage}
             </div>
           )}
@@ -109,7 +109,7 @@ function Formbox(props: Props) {
               </div>
             ))}
           {message && message.length > 0 && message.map((data, index) => (
-            <dd key={index} className={data.className ? data.className.join('') : "mt-2  font-normal"}>{data.message}</dd>
+            <dd key={index} className={data.className ? data.className.join('') : "mt-2 text-black font-normal"}>{data.message}</dd>
           ))
           }
           {buttons &&
