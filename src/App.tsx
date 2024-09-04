@@ -64,14 +64,14 @@ function App() {
             textfield={[
               {
                 name: "firstname",
-                placeholder: "Enter your Firstname",
+                placeholder: "Enter your Firstname...",
                 label: "FirstName",
                 required: false,
                 // type: "text"
               },
               {
                 name: "age",
-                placeholder: "Enter your age",
+                placeholder: "Enter your age...",
                 label: "Age",
                 type: "number"
               },
@@ -103,7 +103,8 @@ function App() {
               title: "Confirmation-Form",
             }]}
             message={[{
-              message: "This is very important file Are you sure want to delete this file? Please reconfirm it!"
+              message: "This is very important file Are you sure want to delete this file? Please reconfirm it!",
+
             }]}
             buttons={[{
               name: "Ok",

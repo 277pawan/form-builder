@@ -41,6 +41,7 @@ function Inputtag(props: Props) {
                 value={value}
                 onChange={handleChange}
                 required={required ?? true}
+                aria-required={required ?? true}
                 style={{
                     backgroundColor: '#d7d7d7',
                     // color: 'black',

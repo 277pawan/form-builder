@@ -31,13 +31,12 @@ interface Props {
   textfield?: Person[];  // Make this prop optional
   buttons?: Button[];
   formtitle?: FormTitle[];
-  formmessage?: string;  // New prop for messages or descriptions
   formtoogle: React.Dispatch<SetStateAction<boolean>>;
   message?: Message[];
 }
 
 function Formbox(props: Props) {
-  const { formtoogle, message, textfield, buttons, formtitle, formmessage } = props;
+  const { formtoogle, message, textfield, buttons, formtitle, } = props;
   const [formData, setFormData] = useState<{ [key: string]: any }>({});
   const [initialFormData, setInitialFormData] = useState<{ [key: string]: any }>({});
   const formref = useRef<HTMLDivElement>(null);
@@ -83,8 +82,8 @@ function Formbox(props: Props) {
   };
 
   return (
-    <div className="fixed top-0 left-0 h-screen w-screen bg-gray-50 flex bg-opacity-5 backdrop-blur-sm items-center justify-center">
-      <div className="absolute top-0 left-0 h-full w-full bg-gray-900 bg-opacity-10 backdrop-blur-sm"></div>
+    <div className="fixed top-0 left-0 h-screen w-screen bg-gray-50 flex bg-opacity-5 backdrop-blur-[2px] items-center justify-center">
+      <div className="absolute top-0 left-0 h-full w-full bg-gray-700 bg-opacity-10 backdrop-blur-sm"></div>
       <div ref={formref} className="relative z-10 bg-white p-6 rounded shadow-lg w-full max-w-lg mx-4">
         <form onSubmit={handleSubmitFn}>
           {formtitle && formtitle.map((data, index) => (
@@ -92,11 +91,6 @@ function Formbox(props: Props) {
               {data.title}
             </div>
           ))}
-          {formmessage && (
-            <div className="my-2 text-sm text-white">
-              {formmessage}
-            </div>
-          )}
           {textfield && textfield.length > 0 &&
             textfield.map((field, index) => (
               <div key={index} className="mb-2 flex flex-col justify-start items-start">
