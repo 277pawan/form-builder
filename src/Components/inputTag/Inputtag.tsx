@@ -7,20 +7,45 @@ interface Person {
     type?: string;
     required?: boolean;
 }
-
+interface FormErrors {
+    [key: string]: string | undefined;
+}
 interface Props {
     textfield: Person;
     value: any;
     onChange: (name: string, value: any) => void;
     className?: string[];
+    formErrors?: FormErrors;
 }
 
 function Inputtag(props: Props) {
-    const { textfield, value, onChange, className } = props;
+    const { textfield, value, onChange, className, formErrors } = props;
     const { name, label, required, placeholder, type } = textfield;
 
     const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        onChange(name, event.target.value);
+        let inputValue: any = event.target.value;
+
+        // Handle specific input types
+        switch (textfield.type) {
+            case "number":
+                inputValue = event.target.value === "" ? "" : Number(event.target.value);
+                break;
+            case "date":
+
+                inputValue = event.target.value ? new Date(event.target.value) : "";
+                break;
+            case "time":
+                inputValue = event.target.value;
+                break;
+            case "checkbox":
+                inputValue = event.target.checked;
+                break;
+            default:
+                inputValue = event.target.value;
+                break;
+        }
+
+        onChange(textfield.name, inputValue);
     };
 
     return (
@@ -50,6 +75,9 @@ function Inputtag(props: Props) {
                     caretColor: "black"
                 }}
             />
+            {formErrors && formErrors[textfield.name] && (
+                <span className="text-sm font-medium text-red-400">{formErrors[textfield.name]}</span>
+            )}
         </>
     );
 }

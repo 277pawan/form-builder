@@ -3,13 +3,19 @@ import reactLogo from "./assets/react.svg";
 import viteLogo from "/vite.svg";
 import "./App.css";
 import Formbox from "./Components/formbox/Formbox";
-
+import { z } from "zod"
 function App() {
   const [count, setCount] = useState(0);
   const [firstform, setfirstform] = useState<boolean>(false);
   const [secondform, setsecondform] = useState<boolean>(false);
   const [productId, setproductId] = useState<string>("")
   // const [secondform, setsecondform] = useState<Boolean>(false);
+
+  const validationSchema = z.object({
+    firstname: z.string().min(4, { message: "First name must be at least 4 characters" }),
+    age: z.number().min(18, { message: "You must be at least 18 years old" }),
+  });
+
   const handlesubmit = (data: any, e: React.MouseEvent) => {
     e.preventDefault();
     console.log(data)
@@ -73,7 +79,8 @@ function App() {
                 name: "age",
                 placeholder: "Enter your age...",
                 label: "Age",
-                type: "number"
+                type: "number",
+                required: false,
               },
 
             ]}
@@ -91,6 +98,7 @@ function App() {
                 function: handlesubmit,
               }
             ]}
+            validationSchema={validationSchema}
           />
         ) : (
           ""

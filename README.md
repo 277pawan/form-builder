@@ -22,7 +22,7 @@ $ yarn add react-form-toaster
 - Default Form UI: Comes with a beautifully designed default form UI that you can use as-is or customize further to match your design requirements.
 - Form Validation and Error Handling: Easily define required fields and validate user input with built-in error handling and custom validation functions.🍃
 - Responsive Design: Fully responsive, making it easy to create forms that look great on any device.
-- Animation and Effects: Easily apply animations, such as click outside the box to close the form.
+- Zod Validation: Easily apply Zod validation in your Form🔐.
 - Fully Customizable Forms: Provides the flexibility to design forms with custom classes and styles, ensuring they match your application's theme.😱
 
 ### Quick Setup
@@ -85,6 +85,7 @@ import "react-form-toaster/dist/dist/tailwind.css";
       function: handlesubmit,
     },
   ]}
+  validationSchema={validationSchema}
 />;
 ```
 
@@ -93,6 +94,17 @@ const handlesubmit = (data: any, e: React.MouseEvent) => {
   e.preventDefault();
   console.log(data);
 };
+```
+
+#### Zod Validation
+
+```javascript
+const validationSchema = z.object({
+  firstname: z
+    .string()
+    .min(4, { message: "First name must be at least 4 characters" }),
+  age: z.number().min(18, { message: "You must be at least 18 years old" }),
+});
 ```
 
 ### Confirmation-Forms
@@ -136,9 +148,5 @@ const handleConfirm = (confirm: boolean, productId: number) => {
 
 Show your ❤️ and support by giving a ⭐. Any suggestions are welcome! Take a look at the contributing guide.
 You can also find me on Github [**277pawan**](https://github.com/277pawan).
-
-## License
-
-MIT
 
 **Free Library, Happy Coding😎😎!**

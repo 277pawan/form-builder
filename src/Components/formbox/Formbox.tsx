@@ -1,7 +1,7 @@
 import React, { SetStateAction, useEffect, useRef, useState } from "react";
 import Inputtag from "../inputTag/Inputtag";
 import Buttontag from "../button/Buttontag";
-
+import { z } from "zod"
 interface Person {
   name: string;
   placeholder?: string;
@@ -33,11 +33,13 @@ interface Props {
   formtitle?: FormTitle[];
   formtoogle: React.Dispatch<SetStateAction<boolean>>;
   message?: Message[];
+  validationSchema?: z.ZodObject<any>;
 }
 
 function Formbox(props: Props) {
-  const { formtoogle, message, textfield, buttons, formtitle, } = props;
+  const { formtoogle, message, textfield, buttons, formtitle, validationSchema } = props;
   const [formData, setFormData] = useState<{ [key: string]: any }>({});
+  const [formErrors, setFormErrors] = useState<{ [key: string]: any }>({})
   const [initialFormData, setInitialFormData] = useState<{ [key: string]: any }>({});
   const formref = useRef<HTMLDivElement>(null);
 
@@ -77,7 +79,25 @@ function Formbox(props: Props) {
     e.preventDefault();
     const submitButton = buttons?.find((button) => button.type === "submit");
     if (submitButton) {
-      submitButton.function(formData, e as any);
+      if (validationSchema) {
+        const validationData = validationSchema.safeParse(formData)
+        if (!validationData.success) {
+          const errors: any = {};
+          validationData.error.errors.forEach((err) => {
+            errors[err.path[0]] = err.message;
+          });
+          setFormErrors(errors);
+          return;
+        }
+        else {
+          submitButton.function(formData, e as any);
+          setFormErrors({});
+        }
+      }
+      else {
+        submitButton.function(formData, e as any);
+        setFormErrors({});
+      }
     }
   };
 
@@ -99,6 +119,7 @@ function Formbox(props: Props) {
                   value={formData[field.name]}
                   onChange={handleInputChange}
                   className={field.className}
+                  formErrors={formErrors}
                 />
               </div>
             ))}

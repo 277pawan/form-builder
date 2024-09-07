@@ -2,10 +2,10 @@
   "name": "reactform-builder",
   "version": "1.0.0",
   "description": "A reusable form builder component for React",
-  "type":"module",
+  "type": "module",
   "main": "dist/index.js",
   "module": "dist/index.esm.js",
-  "types": "dist/index.d.ts", 
+  "types": "dist/index.d.ts",
   "files": [
     "dist"
   ],
@@ -21,7 +21,8 @@
     "postcss": "^8.4.39",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
-    "tailwindcss": "^3.4.6"
+    "tailwindcss": "^3.4.6",
+    "zod": "^3.23.8"
   },
   "devDependencies": {
     "@types/react": "^18.3.3",
