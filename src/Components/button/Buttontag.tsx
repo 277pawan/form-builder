@@ -1,11 +1,11 @@
 import React from "react";
 import "./ButtonTag.css";
 interface Props {
-  value: string;
-  setformdata: React.Dispatch<React.SetStateAction<{ [key: string]: string }>>;
-  initialFormData: { [key: string]: string };
+  value: any;
+  setformdata: React.Dispatch<React.SetStateAction<{ [key: string]: any }>>;
+  initialFormData: { [key: string]: any };
   className: string[] | undefined;
-  action: (data: string, e: React.MouseEvent) => void;
+  action: (data: any, e: React.MouseEvent) => void;
   arialabel?: string;
   tooltip?: string;
   loader?: boolean;
@@ -33,8 +33,8 @@ function Buttontag(props: Props) {
     <div className="relative group inline-block">
       {/* Loader */}
       {loader ? (
-        <div className="flex justify-center items-center max-w-24 w-full h-full">
-          <span className="h-4 w-4  border-2 border-white border-t-blue-500 rounded-full animate-spin"></span>
+        <div className="flex justify-center items-center w-full h-full">
+          <span className="h-4 w-4 border-2 border-white border-t-blue-500 rounded-full animate-spin"></span>
         </div>
       ) : (
         <>{children}</>
