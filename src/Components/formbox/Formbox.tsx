@@ -12,6 +12,10 @@ interface inputField {
   arialabel?: string;
 }
 
+interface LoaderType {
+  loader: boolean;
+  className: string[];
+}
 interface Button {
   name: string;
   type: "submit" | "reset" | "cancel" | "ok";
@@ -20,7 +24,7 @@ interface Button {
   function: (data: any, e: React.MouseEvent) => void;
   arialabel?: string;
   tooltip?: string;
-  loader?: boolean;
+  loader?: LoaderType;
 }
 
 interface FormTitle {

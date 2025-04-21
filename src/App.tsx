@@ -112,24 +112,27 @@ function App() {
                 type: "number",
                 required: false,
               },
-
               {
                 name: "file",
                 placeholder: "Upload your file",
                 label: "File",
                 type: "file",
                 required: false,
-                arialabel: "FileUPload",
+                arialabel: "FileUpload",
               },
             ]}
             buttons={[
               {
-                name: "Reset",
+                name: "Reset Button",
                 type: "reset",
                 label: "Submitbutton",
                 arialabel: "reset_button",
                 tooltip: "Reset Button",
                 function: handlesubmit,
+                loader: {
+                  loader: loader,
+                  className: ["border-red-500 border-4 border-t-white"],
+                },
               },
               {
                 name: "Submit",
@@ -137,11 +140,14 @@ function App() {
                 label: "Submitbutton",
                 arialabel: "Submit_button",
                 tooltip: "Submit Button",
-                loader: loader,
+                loader: {
+                  loader: loader,
+                  className: ["border-8 border-red-800"],
+                },
                 function: handlesubmit,
               },
             ]}
-            validationSchema={validationSchema}
+            //            validationSchema={validationSchema}
           />
         ) : (
           ""
@@ -180,7 +186,7 @@ function App() {
                 type: "ok",
                 function: () => handleConfirm(true),
                 tooltip: "Confirmation",
-                className: ["bg-red-600 -8"],
+                className: ["bg-red-600"],
               },
             ]}
           />
