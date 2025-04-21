@@ -1,14 +1,15 @@
 import React, { SetStateAction, useEffect, useRef, useState } from "react";
 import Inputtag from "../inputTag/Inputtag";
 import Buttontag from "../button/Buttontag";
-import { z } from "zod"
-interface Person {
+import { z } from "zod";
+interface inputField {
   name: string;
   placeholder?: string;
   label?: string;
   type?: string;
   required?: boolean;
   className?: string[];
+  arialabel?: string;
 }
 
 interface Button {
@@ -17,6 +18,9 @@ interface Button {
   label?: string;
   className?: string[];
   function: (data: any, e: React.MouseEvent) => void;
+  arialabel?: string;
+  tooltip?: string;
+  loader?: boolean;
 }
 
 interface FormTitle {
@@ -28,7 +32,8 @@ interface Message {
   className?: string[];
 }
 interface Props {
-  textfield?: Person[];  // Make this prop optional
+  className?: string[];
+  textfield?: inputField[]; // Make this prop optional
   buttons?: Button[];
   formtitle?: FormTitle[];
   formtoogle: React.Dispatch<SetStateAction<boolean>>;
@@ -37,12 +42,22 @@ interface Props {
 }
 
 function Formbox(props: Props) {
-  const { formtoogle, message, textfield, buttons, formtitle, validationSchema } = props;
+  const {
+    className,
+    formtoogle,
+    message,
+    textfield,
+    buttons,
+    formtitle,
+    validationSchema,
+  } = props;
   const [formData, setFormData] = useState<{ [key: string]: any }>({});
-  const [formErrors, setFormErrors] = useState<{ [key: string]: any }>({})
-  const [initialFormData, setInitialFormData] = useState<{ [key: string]: any }>({});
+  const [formErrors, setFormErrors] = useState<{ [key: string]: any }>({});
+  const [initialFormData, setInitialFormData] = useState<{
+    [key: string]: any;
+  }>({});
   const formref = useRef<HTMLDivElement>(null);
-
+  console.log(formData);
   useEffect(() => {
     if (textfield && textfield.length > 0) {
       const initialData: { [key: string]: any } = {};
@@ -80,7 +95,7 @@ function Formbox(props: Props) {
     const submitButton = buttons?.find((button) => button.type === "submit");
     if (submitButton) {
       if (validationSchema) {
-        const validationData = validationSchema.safeParse(formData)
+        const validationData = validationSchema.safeParse(formData);
         if (!validationData.success) {
           const errors: any = {};
           validationData.error.errors.forEach((err) => {
@@ -88,13 +103,11 @@ function Formbox(props: Props) {
           });
           setFormErrors(errors);
           return;
-        }
-        else {
+        } else {
           submitButton.function(formData, e as any);
           setFormErrors({});
         }
-      }
-      else {
+      } else {
         submitButton.function(formData, e as any);
         setFormErrors({});
       }
@@ -104,43 +117,75 @@ function Formbox(props: Props) {
   return (
     <div className="fixed top-0 left-0 h-screen w-screen bg-gray-50 flex bg-opacity-5 backdrop-blur-[2px] items-center justify-center">
       <div className="absolute top-0 left-0 h-full w-full bg-gray-700 bg-opacity-10 backdrop-blur-sm"></div>
-      <div ref={formref} className="relative z-10 bg-white p-6 rounded shadow-lg w-full max-w-lg mx-4">
-        <form onSubmit={handleSubmitFn}>
-          {formtitle && formtitle.map((data, index) => (
-            <div key={index} className={data.className ? data.className.join(' ') : "text-black text-2xl font-bold"}>
-              {data.title}
-            </div>
-          ))}
-          {textfield && textfield.length > 0 &&
+      <div
+        ref={formref}
+        className={`relative z-10 bg-white p-8 md:p-8 rounded-2xl shadow-xl w-full max-w-xl mx-auto border border-gray-200 ${className ? className.join("") : ""}`}
+      >
+        <form onSubmit={handleSubmitFn} className="space-y-4">
+          {formtitle &&
+            formtitle.map((data, index) => (
+              <div
+                key={index}
+                className={
+                  data.className
+                    ? data.className.join(" ")
+                    : "text-gray-800 text-3xl font-semibold mb-4"
+                }
+              >
+                {data.title}
+              </div>
+            ))}
+
+          {textfield &&
+            textfield.length > 0 &&
             textfield.map((field, index) => (
-              <div key={index} className="mb-2 flex flex-col justify-start items-start">
+              <div
+                key={index}
+                className="flex flex-col justify-start items-start"
+              >
                 <Inputtag
                   textfield={field}
                   value={formData[field.name]}
                   onChange={handleInputChange}
                   className={field.className}
                   formErrors={formErrors}
+                  arialabel={field.arialabel}
                 />
               </div>
             ))}
-          {message && message.length > 0 && message.map((data, index) => (
-            <dd key={index} className={data.className ? data.className.join('') : "mt-2 text-black font-normal"}>{data.message}</dd>
-          ))
-          }
-          {buttons &&
-            buttons.map((data, index) => (
-              <div key={index} className="mx-2 mt-2 float-right ">
-                <div className="inline-block">
-                  <Buttontag
-                    value={data}
-                    setformdata={setFormData}
-                    initialFormData={initialFormData}
-                    className={data.className}
-                    action={data.function}
-                  />
-                </div>
-              </div>
+
+          {message &&
+            message.length > 0 &&
+            message.map((data, index) => (
+              <dd
+                key={index}
+                className={
+                  data.className
+                    ? data.className.join(" ")
+                    : "text-sm text-gray-600"
+                }
+              >
+                {data.message}
+              </dd>
             ))}
+
+          {buttons && (
+            <div className="pt-4 flex justify-end gap-3">
+              {buttons.map((data, index) => (
+                <Buttontag
+                  key={index}
+                  value={data}
+                  setformdata={setFormData}
+                  initialFormData={initialFormData}
+                  className={data.className}
+                  action={data.function}
+                  tooltip={data.tooltip}
+                  arialabel={data.arialabel}
+                  loader={data.loader}
+                />
+              ))}
+            </div>
+          )}
         </form>
       </div>
     </div>

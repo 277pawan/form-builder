@@ -3,35 +3,64 @@ import reactLogo from "./assets/react.svg";
 import viteLogo from "/vite.svg";
 import "./App.css";
 import Formbox from "./Components/formbox/Formbox";
-import { z } from "zod"
+import { z } from "zod";
 function App() {
   const [count, setCount] = useState(0);
   const [firstform, setfirstform] = useState<boolean>(false);
   const [secondform, setsecondform] = useState<boolean>(false);
-  const [productId, setproductId] = useState<string>("")
+  const [productId, setproductId] = useState<string>("");
+  const [loader, setLoader] = useState<boolean>(false);
   // const [secondform, setsecondform] = useState<Boolean>(false);
 
   const validationSchema = z.object({
-    firstname: z.string().min(4, { message: "First name must be at least 4 characters" }),
-    age: z.number().min(18, { message: "You must be at least 18 years old" }),
+    firstname: z
+      .string()
+      .min(1, { message: "First name is required" }) // handles empty string
+      .min(4, { message: "First name must be at least 4 characters" }),
+
+    age: z
+      .number()
+      .min(1, { message: "Age is required" }) // handles empty string
+      .refine((val) => !isNaN(Number(val)), {
+        message: "Age must be a number",
+      })
+      .transform((val) => Number(val))
+      .refine((val) => val >= 18, {
+        message: "You must be at least 18 years old",
+      }),
+
+    file: z.any().refine(
+      (file) => {
+        if (file instanceof File) return file.size > 0;
+        if (Array.isArray(file)) return file.length > 0;
+        return false;
+      },
+      {
+        message: "File is required",
+      },
+    ),
   });
 
   const handlesubmit = (data: any, e: React.MouseEvent) => {
     e.preventDefault();
-    console.log(data)
-  }
+    setLoader(true);
+    console.log(data);
+    setTimeout(() => {
+      setLoader(false);
+    }, 20000);
+  };
   const handleConfirm = (confirm: boolean) => {
-    console.log(confirm, productId)
+    console.log(confirm, productId);
     if (confirm && productId) {
       console.log(" We got both of them. Hurrah! 🏆 ");
     }
-    setsecondform(false)
-  }
+    setsecondform(false);
+  };
   const Deletefunc = (e: React.MouseEvent, productid: string) => {
     e.preventDefault();
-    setsecondform(!secondform)
-    setproductId(productid)
-  }
+    setsecondform(!secondform);
+    setproductId(productid);
+  };
   return (
     <>
       <div>
@@ -60,12 +89,13 @@ function App() {
 
         {firstform ? (
           <Formbox
+            className={["bg-gray-200"]}
             formtoogle={setfirstform}
             formtitle={[
               {
                 title: "Form-Builder",
-                className: ["text-2xl font-bold text-black "]
-              }
+                className: ["text-2xl font-bold text-black "],
+              },
             ]}
             textfield={[
               {
@@ -83,54 +113,80 @@ function App() {
                 required: false,
               },
 
+              {
+                name: "file",
+                placeholder: "Upload your file",
+                label: "File",
+                type: "file",
+                required: false,
+                arialabel: "FileUPload",
+              },
             ]}
             buttons={[
-              {
-                name: "Submit",
-                type: "submit",
-                label: "Submitbutton",
-                function: handlesubmit,
-              },
               {
                 name: "Reset",
                 type: "reset",
                 label: "Submitbutton",
+                arialabel: "reset_button",
+                tooltip: "Reset Button",
                 function: handlesubmit,
-              }
+              },
+              {
+                name: "Submit",
+                type: "submit",
+                label: "Submitbutton",
+                arialabel: "Submit_button",
+                tooltip: "Submit Button",
+                loader: loader,
+                function: handlesubmit,
+              },
             ]}
             validationSchema={validationSchema}
           />
         ) : (
           ""
         )}
-        <button onClick={(e) => Deletefunc(e, "Pawan_Bisht")}>Create Second form</button>
+        <button onClick={(e) => Deletefunc(e, "Pawan_Bisht")}>
+          Create Second form
+        </button>
         {secondform ? (
           <Formbox
             formtoogle={setsecondform}
-            formtitle={[{
-              title: "Confirmation-Form",
-            }]}
-            message={[{
-              message: "This is very important file Are you sure want to delete this file? Please reconfirm it!",
-
-            }]}
-            buttons={[{
-              name: "Ok",
-              label: "Confirm",
-              type: "ok",
-              function: () => handleConfirm(true),
-              className: ["bg-red-600"]
-            }, {
-              name: "Cancel",
-              label: "Cancel",
-              type: "cancel",
-              function: () => handleConfirm(false),
-              className: ["text-red-600 border-1 border-red-600 bg-gray-100 hover:border-red-600 "]
-            }]}
+            formtitle={[
+              {
+                title: "Confirmation-Form",
+                className: ["text-2xl font-semibold"],
+              },
+            ]}
+            message={[
+              {
+                message:
+                  "This is very important file. Are you sure want to delete this file? Please provide your reconfirmation!",
+              },
+            ]}
+            buttons={[
+              {
+                name: "Cancel",
+                label: "Cancel",
+                type: "cancel",
+                function: () => handleConfirm(false),
+                className: [
+                  "text-red-600 border-1 border-red-600 bg-gray-100 hover:border-red-600 ",
+                ],
+              },
+              {
+                name: "Ok",
+                label: "Confirm",
+                type: "ok",
+                function: () => handleConfirm(true),
+                tooltip: "Confirmation",
+                className: ["bg-red-600 -8"],
+              },
+            ]}
           />
-        )
-          :
-          ("")}
+        ) : (
+          ""
+        )}
       </div>
     </>
   );
