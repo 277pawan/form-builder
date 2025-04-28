@@ -145,6 +145,68 @@ const handleConfirm = (confirm: boolean, productId: number) => {
 };
 ```
 
+## Component Attributes
+
+The following tables detail all available attributes for each component in React-Form-Toaster:
+
+### Formbox Component Attributes
+
+| Attribute          | Type     | Description                                   | Required |
+| ------------------ | -------- | --------------------------------------------- | -------- |
+| `className`        | string[] | Custom classes for the form container         | No       |
+| `formtoogle`       | Function | Function to toggle form visibility            | Yes      |
+| `formtitle`        | Object[] | Form title configuration                      | No       |
+| `textfield`        | Object[] | Text input field configurations               | No       |
+| `buttons`          | Object[] | Button configurations                         | No       |
+| `message`          | Object[] | Message configurations for confirmation forms | No       |
+| `validationSchema` | Object   | Zod validation schema                         | No       |
+
+### TextField Component Attributes
+
+| Attribute     | Type    | Description                           | Example                   |
+| ------------- | ------- | ------------------------------------- | ------------------------- |
+| `name`        | string  | Input field name                      | "firstname"               |
+| `placeholder` | string  | Placeholder text                      | "Enter your Firstname..." |
+| `label`       | string  | Label text                            | "FirstName"               |
+| `type`        | string  | Input type (text, number, file, etc.) | "number"                  |
+| `required`    | boolean | Whether field is required             | true                      |
+| `arialabel`   | string  | Accessibility label                   | "FileUpload"              |
+
+### File Upload Specific Attributes
+
+| Attribute          | Type        | Description                 | Example                |
+| ------------------ | ----------- | --------------------------- | ---------------------- |
+| `number`           | number      | Maximum number of files     | 5                      |
+| `preview`          | string      | Preview type ("image")      | "image"                |
+| `previewClassName` | string[]    | Classes for preview element | ["h-32 w-32"]          |
+| `icon`             | JSX.Element | Icon for removing files     | `<RiCloseLargeLine />` |
+
+### Button Component Attributes
+
+| Attribute   | Type     | Description                             | Example         |
+| ----------- | -------- | --------------------------------------- | --------------- |
+| `name`      | string   | Button text                             | "Submit"        |
+| `type`      | string   | Button type (submit, reset, ok, cancel) | "submit"        |
+| `label`     | string   | ARIA label                              | "Submitbutton"  |
+| `function`  | Function | Click handler                           | handlesubmit    |
+| `className` | string[] | Custom classes                          | ["bg-red-600"]  |
+| `arialabel` | string   | Accessibility label                     | "Submit_button" |
+| `tooltip`   | string   | Tooltip text                            | "Submit Form"   |
+
+### Loader Component Attributes
+
+| Attribute   | Type     | Description            | Example            |
+| ----------- | -------- | ---------------------- | ------------------ |
+| `loader`    | boolean  | Whether to show loader | true               |
+| `className` | string[] | Loader custom classes  | ["border-red-500"] |
+
+### Message Component Attributes
+
+| Attribute   | Type     | Description    | Example                                  |
+| ----------- | -------- | -------------- | ---------------------------------------- |
+| `message`   | string   | Message text   | "Are you sure want to delete this file?" |
+| `className` | string[] | Custom classes | ["text-gray-700"]                        |
+
 ## Contribute
 
 Show your ❤️ and support by giving a ⭐. Any suggestions are welcome! Take a look at the contributing guide.
