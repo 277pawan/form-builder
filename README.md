@@ -2,9 +2,7 @@
 
 [![GitHub Repo](https://github.githubassets.com/favicons/favicon.png) **React-form-toaster**](https://github.com/277pawan/form-builder)
 
-![User-Form](https://cure-ten.vercel.app/static/media/firstform.b6075305bf63a34699f8.gif)
-
-<video src="./public/Screencast from 2025-04-28 12-04-26.webm" controls width="100%"></video>
+[![Video Demo]](https://cure-ten.vercel.app/static/media/Screencast%20from%202025-04-28%2012-04-26.f61c78fccf60a00e73d3.webm)
 
 ![Confirmation-form](https://cure-ten.vercel.app/static/media/confirm.4b962f1dee5f2bc649cd.png)
 
