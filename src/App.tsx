@@ -3,6 +3,7 @@ import reactLogo from "./assets/react.svg";
 import viteLogo from "/vite.svg";
 import "./App.css";
 import Formbox from "./Components/formbox/Formbox";
+import { IoIosCloseCircle } from "react-icons/io";
 import { z } from "zod";
 function App() {
   const [count, setCount] = useState(0);
@@ -12,43 +13,52 @@ function App() {
   const [loader, setLoader] = useState<boolean>(false);
   // const [secondform, setsecondform] = useState<Boolean>(false);
 
+  // Validation example for form-builder form
   const validationSchema = z.object({
     firstname: z
       .string()
       .min(1, { message: "First name is required" }) // handles empty string
       .min(4, { message: "First name must be at least 4 characters" }),
 
-    age: z
-      .number()
-      .min(1, { message: "Age is required" }) // handles empty string
-      .refine((val) => !isNaN(Number(val)), {
-        message: "Age must be a number",
-      })
-      .transform((val) => Number(val))
-      .refine((val) => val >= 18, {
-        message: "You must be at least 18 years old",
-      }),
-
-    file: z.any().refine(
-      (file) => {
-        if (file instanceof File) return file.size > 0;
-        if (Array.isArray(file)) return file.length > 0;
-        return false;
+    age: z.preprocess(
+      (val) => {
+        if (typeof val === "string") {
+          if (val.trim() === "") return undefined;
+          const num = Number(val);
+          if (isNaN(num)) return val;
+          return num;
+        }
+        return val;
       },
-      {
-        message: "File is required",
-      },
+      z
+        .number({
+          required_error: "Age is required",
+          invalid_type_error: "Age must be a number",
+        })
+        .refine((val) => val >= 18, {
+          message: "You must be at least 18 years old",
+        }),
     ),
+    file: z
+      .instanceof(File, { message: "File is required" })
+      .or(z.array(z.instanceof(File)).nonempty("At least one file required"))
+      .refine((files) => {
+        if (Array.isArray(files)) return files.length <= 5;
+        return true;
+      }, "Maximum 5 files allowed"),
   });
-
+  // handle submit function for the form-builder form to submit the data
   const handlesubmit = (data: any, e: React.MouseEvent) => {
     e.preventDefault();
-    setLoader(true);
     console.log(data);
+    setLoader(true);
+    console.log("this is the data:- ", data);
     setTimeout(() => {
       setLoader(false);
-    }, 20000);
+    }, 2000);
   };
+
+  // handle Confirm function for the confirmation box
   const handleConfirm = (confirm: boolean) => {
     console.log(confirm, productId);
     if (confirm && productId) {
@@ -115,10 +125,14 @@ function App() {
               {
                 name: "file",
                 placeholder: "Upload your file",
-                label: "File",
+                label: "Please upload up to 5 files",
                 type: "file",
+                number: 5,
+                preview: "image",
+                previewClassName: ["h-32 w-32"],
                 required: false,
                 arialabel: "FileUpload",
+                icon: <IoIosCloseCircle />,
               },
             ]}
             buttons={[
@@ -128,11 +142,6 @@ function App() {
                 label: "Submitbutton",
                 arialabel: "reset_button",
                 tooltip: "Reset Button",
-                function: handlesubmit,
-                loader: {
-                  loader: loader,
-                  className: ["border-red-500 border-4 border-t-white"],
-                },
               },
               {
                 name: "Submit",
@@ -142,12 +151,12 @@ function App() {
                 tooltip: "Submit Button",
                 loader: {
                   loader: loader,
-                  className: ["border-8 border-red-800"],
+                  className: ["border-red-500 border-4 border-t-blue-800"],
                 },
                 function: handlesubmit,
               },
             ]}
-            //            validationSchema={validationSchema}
+            validationSchema={validationSchema}
           />
         ) : (
           ""
@@ -181,7 +190,7 @@ function App() {
                 ],
               },
               {
-                name: "Ok",
+                name: "Yes",
                 label: "Confirm",
                 type: "ok",
                 function: () => handleConfirm(true),

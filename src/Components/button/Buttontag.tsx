@@ -6,10 +6,10 @@ interface LoaderType {
   className: string[];
 }
 // Button Component props
-interface Props {
+interface Props<T> {
   value: any;
-  setformdata: React.Dispatch<React.SetStateAction<{ [key: string]: any }>>;
-  initialFormData: { [key: string]: any };
+  setformdata: React.Dispatch<React.SetStateAction<T>>;
+  initialFormData: T;
   className: string[] | undefined;
   action: (data: any, e: React.MouseEvent) => void;
   arialabel?: string;
@@ -17,7 +17,7 @@ interface Props {
   loader?: LoaderType;
 }
 
-function Buttontag(props: Props) {
+function Buttontag<T>(props: Props<T>) {
   const {
     action,
     value,
@@ -33,7 +33,6 @@ function Buttontag(props: Props) {
   const handleResetFn = (e: React.MouseEvent) => {
     e.preventDefault();
     setformdata(initialFormData);
-    value.function(initialFormData, e);
   };
 
   // Button Wrrapper Function
@@ -69,7 +68,7 @@ function Buttontag(props: Props) {
                   {value.name}
                 </span>
                 <span
-                  className={`absolute left-[42%] h-6 w-6 border-2 border-white border-t-blue-500 rounded-full animate-spin ${loader.className ? loader.className.join("") : ""}`}
+                  className={`absolute left-[42%] h-6 w-6 border-2 border-white border-t-blue-800 rounded-full animate-spin ${loader.className ? loader.className.join("") : ""}`}
                 ></span>
               </>
             ) : (
@@ -90,7 +89,18 @@ function Buttontag(props: Props) {
             type={value.type}
             aria-label={arialabel}
           >
-            {value.name}
+            {loader?.loader ? (
+              <>
+                <span className="text-md tracking-wide invisible">
+                  {value.name}
+                </span>
+                <span
+                  className={`absolute left-[42%] h-6 w-6 border-2 border-white border-t-blue-800 rounded-full animate-spin ${loader.className ? loader.className.join("") : ""}`}
+                ></span>
+              </>
+            ) : (
+              <>{value.name}</>
+            )}
           </button>
         </ButtonWrapper>
       )}
@@ -106,7 +116,18 @@ function Buttontag(props: Props) {
             onClick={(e) => action(true, e)}
             aria-label={arialabel}
           >
-            Yes
+            {loader?.loader ? (
+              <>
+                <span className="text-md tracking-wide invisible">
+                  {value.name}
+                </span>
+                <span
+                  className={`absolute left-[42%] h-6 w-6 border-2 border-white border-t-blue-800 rounded-full animate-spin ${loader.className ? loader.className.join("") : ""}`}
+                ></span>
+              </>
+            ) : (
+              <>{value.name}</>
+            )}
           </button>
         </ButtonWrapper>
       )}
@@ -122,7 +143,18 @@ function Buttontag(props: Props) {
             onClick={(e) => action(false, e)}
             aria-label={arialabel}
           >
-            Cancel
+            {loader?.loader ? (
+              <>
+                <span className="text-md tracking-wide invisible">
+                  {value.name}
+                </span>
+                <span
+                  className={`absolute left-[42%] h-6 w-6 border-2 border-white border-t-blue-800 rounded-full animate-spin ${loader.className ? loader.className.join("") : ""}`}
+                ></span>
+              </>
+            ) : (
+              <>{value.name}</>
+            )}
           </button>
         </ButtonWrapper>
       )}

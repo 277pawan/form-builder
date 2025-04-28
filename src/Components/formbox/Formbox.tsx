@@ -2,16 +2,20 @@ import React, { SetStateAction, useEffect, useRef, useState } from "react";
 import Inputtag from "../inputTag/Inputtag";
 import Buttontag from "../button/Buttontag";
 import { z } from "zod";
-interface inputField {
-  name: string;
+
+interface inputField<T> {
+  name: keyof T;
   placeholder?: string;
   label?: string;
   type?: string;
   required?: boolean;
   className?: string[];
   arialabel?: string;
+  number?: number;
+  preview?: "name" | "image";
+  previewClassName?: string[];
+  icon?: React.ReactNode;
 }
-
 interface LoaderType {
   loader: boolean;
   className: string[];
@@ -21,7 +25,7 @@ interface Button {
   type: "submit" | "reset" | "cancel" | "ok";
   label?: string;
   className?: string[];
-  function: (data: any, e: React.MouseEvent) => void;
+  function?: (data: any, e: React.MouseEvent) => void;
   arialabel?: string;
   tooltip?: string;
   loader?: LoaderType;
@@ -35,9 +39,10 @@ interface Message {
   message: string;
   className?: string[];
 }
-interface Props {
+
+interface Props<TFormData> {
   className?: string[];
-  textfield?: inputField[]; // Make this prop optional
+  textfield?: inputField<TFormData>[]; // Tied to the generic
   buttons?: Button[];
   formtitle?: FormTitle[];
   formtoogle: React.Dispatch<SetStateAction<boolean>>;
@@ -45,7 +50,9 @@ interface Props {
   validationSchema?: z.ZodObject<any>;
 }
 
-function Formbox(props: Props) {
+function Formbox<TFormData extends Record<string, any>>(
+  props: Props<TFormData>,
+) {
   const {
     className,
     formtoogle,
@@ -55,21 +62,27 @@ function Formbox(props: Props) {
     formtitle,
     validationSchema,
   } = props;
-  const [formData, setFormData] = useState<{ [key: string]: any }>({});
-  const [formErrors, setFormErrors] = useState<{ [key: string]: any }>({});
-  const [initialFormData, setInitialFormData] = useState<{
-    [key: string]: any;
-  }>({});
+
+  const [formData, setFormData] = useState<TFormData>({} as TFormData);
+  const [formErrors, setFormErrors] = useState<
+    Partial<Record<keyof TFormData, string>>
+  >({});
+  const [initialFormData, setInitialFormData] = useState<TFormData>(
+    {} as TFormData,
+  );
   const formref = useRef<HTMLDivElement>(null);
-  console.log(formData);
+
   useEffect(() => {
     if (textfield && textfield.length > 0) {
-      const initialData: { [key: string]: any } = {};
+      const initialData = {} as Partial<TFormData>;
       textfield.forEach((field) => {
-        initialData[field.name] = "";
+        // Initialize file fields as arrays
+        initialData[field.name] = (
+          field.type === "file" ? [] : ""
+        ) as TFormData[typeof field.name];
       });
-      setFormData(initialData);
-      setInitialFormData(initialData);
+      setFormData(initialData as TFormData);
+      setInitialFormData(initialData as TFormData);
     }
   }, [textfield]);
 
@@ -87,11 +100,27 @@ function Formbox(props: Props) {
     };
   }, [formtoogle]);
 
-  const handleInputChange = (name: string, value: any) => {
-    setFormData((prevFormData) => ({
-      ...prevFormData,
-      [name]: value,
-    }));
+  const handleInputChange = <K extends keyof TFormData>(
+    name: K,
+    value: TFormData[K],
+  ) => {
+    setFormData((prevFormData) => {
+      // Special handling for file inputs
+      if (
+        textfield?.find((field) => field.name === name && field.type === "file")
+      ) {
+        return {
+          ...prevFormData,
+          [name]: value, // For file inputs, directly use the value which should be an array of Files
+        };
+      }
+
+      // For all other input types
+      return {
+        ...prevFormData,
+        [name]: value,
+      };
+    });
   };
 
   const handleSubmitFn = (e: React.FormEvent<HTMLFormElement>) => {
@@ -101,18 +130,18 @@ function Formbox(props: Props) {
       if (validationSchema) {
         const validationData = validationSchema.safeParse(formData);
         if (!validationData.success) {
-          const errors: any = {};
+          const errors: Partial<Record<keyof TFormData, string>> = {};
           validationData.error.errors.forEach((err) => {
-            errors[err.path[0]] = err.message;
+            errors[err.path[0] as keyof TFormData] = err.message;
           });
           setFormErrors(errors);
           return;
         } else {
-          submitButton.function(formData, e as any);
+          submitButton.function?.(formData, e as any);
           setFormErrors({});
         }
       } else {
-        submitButton.function(formData, e as any);
+        submitButton.function?.(formData, e as any);
         setFormErrors({});
       }
     }
@@ -172,7 +201,6 @@ function Formbox(props: Props) {
                 {data.message}
               </dd>
             ))}
-
           {buttons && (
             <div className="pt-4 flex justify-end gap-3">
               {buttons.map((data, index) => (
@@ -182,7 +210,11 @@ function Formbox(props: Props) {
                   setformdata={setFormData}
                   initialFormData={initialFormData}
                   className={data.className}
-                  action={data.function}
+                  action={(formData, e) => {
+                    if (data.function) {
+                      data.function(formData, e);
+                    }
+                  }}
                   tooltip={data.tooltip}
                   arialabel={data.arialabel}
                   loader={data.loader}
