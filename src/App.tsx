@@ -114,11 +114,12 @@ function App() {
               },
               {
                 name: "file",
-                placeholder: "Upload your file",
+                placeholder: "Upload your Image",
                 label: "File",
                 type: "file",
                 required: false,
-                arialabel: "FileUpload",
+                arialabel: "File",
+                maxFiles: 2,
               },
             ]}
             buttons={[

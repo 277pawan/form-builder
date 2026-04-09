@@ -10,6 +10,7 @@ interface inputField {
   required?: boolean;
   className?: string[];
   arialabel?: string;
+  maxFiles?: number;
 }
 
 interface LoaderType {
@@ -88,6 +89,7 @@ function Formbox(props: Props) {
   }, [formtoogle]);
 
   const handleInputChange = (name: string, value: any) => {
+    console.log(name, value);
     setFormData((prevFormData) => ({
       ...prevFormData,
       [name]: value,
@@ -153,7 +155,6 @@ function Formbox(props: Props) {
                   onChange={handleInputChange}
                   className={field.className}
                   formErrors={formErrors}
-                  arialabel={field.arialabel}
                 />
               </div>
             ))}
