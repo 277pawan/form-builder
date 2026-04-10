@@ -62,7 +62,6 @@ function Formbox(props: Props) {
     [key: string]: any;
   }>({});
   const formref = useRef<HTMLDivElement>(null);
-  console.log(formData);
   useEffect(() => {
     if (textfield && textfield.length > 0) {
       const initialData: { [key: string]: any } = {};
@@ -89,7 +88,6 @@ function Formbox(props: Props) {
   }, [formtoogle]);
 
   const handleInputChange = (name: string, value: any) => {
-    console.log(name, value);
     setFormData((prevFormData) => ({
       ...prevFormData,
       [name]: value,
@@ -101,7 +99,37 @@ function Formbox(props: Props) {
     const submitButton = buttons?.find((button) => button.type === "submit");
     if (submitButton) {
       if (validationSchema) {
-        const validationData = validationSchema.safeParse(formData);
+        const processedData: { [key: string]: any } = { ...formData };
+
+        // Collect non-required field names
+        const nonRequiredFields: string[] = [];
+
+        textfield?.forEach((field) => {
+          if (field.required === false || field.required === undefined) {
+            nonRequiredFields.push(field.name);
+            processedData[field.name] = undefined; // 👈 this is the key fix
+          }
+          // Coerce number fields
+          if (field.type === "number" && processedData[field.name] !== "") {
+            processedData[field.name] = Number(processedData[field.name]);
+          }
+        });
+
+        // Dynamically make non-required fields optional in the schema
+        const schemaShape = validationSchema.shape;
+        const updatedShape: { [key: string]: z.ZodTypeAny } = {};
+
+        Object.keys(schemaShape).forEach((key) => {
+          if (nonRequiredFields.includes(key)) {
+            updatedShape[key] = schemaShape[key].optional(); // 👈 make it optional
+          } else {
+            updatedShape[key] = schemaShape[key];
+          }
+        });
+
+        const adjustedSchema = z.object(updatedShape);
+        const validationData = adjustedSchema.safeParse(processedData);
+
         if (!validationData.success) {
           const errors: any = {};
           validationData.error.errors.forEach((err) => {

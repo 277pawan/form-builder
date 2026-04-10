@@ -97,13 +97,13 @@ function Inputtag(props: Props) {
           <label
             htmlFor={name}
             className={`flex flex-col items-center justify-center w-full min-h-[80px] border-2 border-dashed rounded-lg cursor-pointer transition-colors my-1
-              ${
-                Array.isArray(value) && value.length >= maxFiles
-                  ? "border-gray-300 bg-gray-100 opacity-50 cursor-not-allowed"
-                  : "border-blue-400 bg-blue-50 hover:bg-blue-100"
-              }`}
+    ${className ? className.join(" ") : ""}
+    ${
+      Array.isArray(value) && value.length >= maxFiles
+        ? "border-gray-300 bg-gray-100 opacity-50 cursor-not-allowed"
+        : "border-blue-400 bg-blue-50 hover:bg-blue-100"
+    }`}
           >
-            <span className="text-2xl">📎</span>
             <span className="text-sm text-blue-600 font-medium mt-1">
               {Array.isArray(value) && value.length >= maxFiles
                 ? `Maximum ${maxFiles} file${maxFiles > 1 ? "s" : ""} reached`
@@ -148,7 +148,7 @@ function Inputtag(props: Props) {
                     onClick={() => removeFile(index)}
                     className="absolute top-1 right-0 p-0 z-10 w-5 h-5 flex items-center justify-center
                       rounded-full bg-slate-700 text-white text-xl font-bold
-                      opacity-90 hover:opacity-100 transition-opacity shadow"
+                      opacity-80 hover:opacity-100 transition-opacity shadow"
                     aria-label={`Remove ${file.name}`}
                   >
                     ×
@@ -188,6 +188,9 @@ function Inputtag(props: Props) {
           onChange={handleTextChange} // ✅ correct handler
           required={required ?? true}
           aria-label={arialabel}
+          onWheel={(e) => {
+            if (type === "number") e.currentTarget.blur();
+          }}
           aria-required={required ?? true}
           style={{
             backgroundColor: "#d7d7d7",
@@ -199,7 +202,7 @@ function Inputtag(props: Props) {
 
       {/* Validation errors */}
       {formErrors && formErrors[name] && (
-        <span className="text-xs text-red-500 mt-0.5 block">
+        <span className="text-sm text-red-600 mt-0.5 block">
           {formErrors[name]}
         </span>
       )}

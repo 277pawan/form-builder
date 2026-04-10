@@ -24,7 +24,6 @@ function App() {
       .refine((val) => !isNaN(Number(val)), {
         message: "Age must be a number",
       })
-      .transform((val) => Number(val))
       .refine((val) => val >= 18, {
         message: "You must be at least 18 years old",
       }),
@@ -91,6 +90,7 @@ function App() {
           <Formbox
             className={["bg-gray-200"]}
             formtoogle={setfirstform}
+            validationSchema={validationSchema}
             formtitle={[
               {
                 title: "Form-Builder",
@@ -102,24 +102,26 @@ function App() {
                 name: "firstname",
                 placeholder: "Enter your Firstname...",
                 label: "FirstName",
-                required: false,
-                // type: "text"
+                required: true,
+                type: "text",
               },
               {
                 name: "age",
                 placeholder: "Enter your age...",
                 label: "Age",
                 type: "number",
-                required: false,
+                required: true,
               },
               {
                 name: "file",
                 placeholder: "Upload your Image",
                 label: "File",
                 type: "file",
-                required: false,
                 arialabel: "File",
                 maxFiles: 2,
+                className: [
+                  "border-2 border-dotted border-gray-400 p-2 rounded-lg bg-gray-100",
+                ],
               },
             ]}
             buttons={[
