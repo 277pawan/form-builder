@@ -15,16 +15,16 @@ interface inputField {
 
 interface LoaderType {
   loader: boolean;
-  className: string[];
+  className?: string[];
 }
 interface Button {
   name: string;
   type: "submit" | "reset" | "cancel" | "ok";
-  label?: string;
   className?: string[];
-  function: (data: any, e: React.MouseEvent) => void;
+  function?: (data: any, e: React.MouseEvent) => void;
   arialabel?: string;
   tooltip?: string;
+  disabled?: boolean;
   loader?: LoaderType;
 }
 
@@ -62,16 +62,33 @@ function Formbox(props: Props) {
     [key: string]: any;
   }>({});
   const formref = useRef<HTMLDivElement>(null);
+  const submitLoader = buttons?.find((b) => b.type === "submit")?.loader
+    ?.loader;
+  const prevLoaderRef = useRef<boolean>(false);
+
+  useEffect(() => {
+    // Trigger reset only when loader goes from true → false
+    if (prevLoaderRef.current === true && submitLoader === false) {
+      setFormData(initialFormData);
+      setFormErrors({});
+    }
+    prevLoaderRef.current = submitLoader ?? false;
+  }, [submitLoader, initialFormData]);
+
   useEffect(() => {
     if (textfield && textfield.length > 0) {
       const initialData: { [key: string]: any } = {};
       textfield.forEach((field) => {
         initialData[field.name] = "";
       });
-      setFormData(initialData);
       setInitialFormData(initialData);
+      // 👇 Only set formData on first mount, not on every re-render
+      setFormData((prev) => {
+        const hasData = Object.keys(prev).length > 0;
+        return hasData ? prev : initialData;
+      });
     }
-  }, [textfield]);
+  }, []); // 👈 empty dependency — run only once on mount
 
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
@@ -214,6 +231,7 @@ function Formbox(props: Props) {
                   action={data.function}
                   tooltip={data.tooltip}
                   arialabel={data.arialabel}
+                  disabled={data.disabled}
                   loader={data.loader}
                 />
               ))}

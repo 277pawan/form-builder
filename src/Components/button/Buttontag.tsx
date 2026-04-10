@@ -3,7 +3,7 @@ import "./ButtonTag.css";
 
 interface LoaderType {
   loader: boolean;
-  className: string[];
+  className?: string[];
 }
 // Button Component props
 interface Props {
@@ -11,9 +11,10 @@ interface Props {
   setformdata: React.Dispatch<React.SetStateAction<{ [key: string]: any }>>;
   initialFormData: { [key: string]: any };
   className: string[] | undefined;
-  action: (data: any, e: React.MouseEvent) => void;
+  action?: (data: any, e: React.MouseEvent) => void;
   arialabel?: string;
   tooltip?: string;
+  disabled?: boolean;
   loader?: LoaderType;
 }
 
@@ -27,13 +28,13 @@ function Buttontag(props: Props) {
     tooltip,
     className,
     loader,
+    disabled,
   } = props;
 
   // Handle reset funcction
   const handleResetFn = (e: React.MouseEvent) => {
     e.preventDefault();
     setformdata(initialFormData);
-    value.function(initialFormData, e);
   };
 
   // Button Wrrapper Function
@@ -71,15 +72,32 @@ function Buttontag(props: Props) {
       {value.type === "submit" && (
         <ButtonWrapper>
           <button
-            className={
+            className={`${
               className
                 ? className.join(" ")
                 : "text-md tracking-wide bg-[#0878ce] hover:bg-[#2a6898]"
-            }
+            } ${disabled ? "opacity-50 cursor-not-allowed pointer-events-none" : ""}`}
             type={value.type}
             aria-label={arialabel}
+            disabled={disabled}
           >
-            {value.name}
+            {loader?.loader ? (
+              <>
+                {" "}
+                <span className="text-md tracking-wide invisible">
+                  {value.name}
+                </span>
+                <span
+                  className={`absolute left-[42%] h-6 w-6 rounded-full animate-spin ${
+                    loader?.className
+                      ? loader.className.join(" ")
+                      : "border-2 border-white border-t-blue-500"
+                  }`}
+                ></span>
+              </>
+            ) : (
+              <>{value.name}</>
+            )}
           </button>
         </ButtonWrapper>
       )}
@@ -120,15 +138,3 @@ function Buttontag(props: Props) {
 }
 
 export default Buttontag;
-
-// {loader?.loader ? ( <>
-//     <span className="text-md tracking-wide invisible">
-//       {value.name}
-//     </span>
-//     <span
-//       className={`absolute left-[42%] h-6 w-6 border-2 border-white border-t-blue-500 rounded-full animate-spin ${loader.className ? loader.className.join("") : ""}`}
-//     ></span>
-//   </>
-// ) : (
-//   <>{value.name}</>
-// )}

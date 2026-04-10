@@ -43,22 +43,18 @@ function App() {
   const handlesubmit = (data: any, e: React.MouseEvent) => {
     e.preventDefault();
     setLoader(true);
-    console.log(data);
     setTimeout(() => {
       setLoader(false);
-    }, 20000);
+      console.log("Final after loader data:-", data);
+    }, 2000);
   };
-  const handleConfirm = (confirm: boolean) => {
-    console.log(confirm, productId);
-    if (confirm && productId) {
+  const handleConfirm = (confirm: boolean, id?: string) => {
+    const finalId = id ?? "default_id";
+    console.log(finalId);
+    if (confirm) {
       console.log(" We got both of them. Hurrah! 🏆 ");
     }
     setsecondform(false);
-  };
-  const Deletefunc = (e: React.MouseEvent, productid: string) => {
-    e.preventDefault();
-    setsecondform(!secondform);
-    setproductId(productid);
   };
   return (
     <>
@@ -88,7 +84,9 @@ function App() {
 
         {firstform ? (
           <Formbox
-            className={["bg-gray-200"]}
+            className={[
+              "bg-gray-200 border-1 border-gray-100 rounded-lg shadow-md",
+            ]}
             formtoogle={setfirstform}
             validationSchema={validationSchema}
             formtitle={[
@@ -128,26 +126,18 @@ function App() {
               {
                 name: "Reset Button",
                 type: "reset",
-                label: "Submitbutton",
                 arialabel: "reset_button",
                 tooltip: "Reset Button",
-                function: handlesubmit,
-                loader: {
-                  loader: loader,
-                  className: ["border-red-500 border-4 border-t-white"],
-                },
               },
               {
                 name: "Submit",
                 type: "submit",
-                label: "Submitbutton",
                 arialabel: "Submit_button",
                 tooltip: "Submit Button",
+                function: handlesubmit,
                 loader: {
                   loader: loader,
-                  className: ["border-8 border-red-800"],
                 },
-                function: handlesubmit,
               },
             ]}
             //            validationSchema={validationSchema}
@@ -155,7 +145,7 @@ function App() {
         ) : (
           ""
         )}
-        <button onClick={(e) => Deletefunc(e, "Pawan_Bisht")}>
+        <button onClick={() => setsecondform(!secondform)}>
           Create Second form
         </button>
         {secondform ? (
@@ -176,7 +166,6 @@ function App() {
             buttons={[
               {
                 name: "Cancel",
-                label: "Cancel",
                 type: "cancel",
                 function: () => handleConfirm(false),
                 className: [
@@ -185,9 +174,8 @@ function App() {
               },
               {
                 name: "Ok",
-                label: "Confirm",
                 type: "ok",
-                function: () => handleConfirm(true),
+                function: () => handleConfirm(true, "secret_id"),
                 tooltip: "Confirmation",
                 className: ["bg-red-600"],
               },
