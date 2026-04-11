@@ -109,6 +109,18 @@ function App() {
                 required: true,
               },
               {
+                name: "marritalStatus?",
+                label: "Marital Status",
+                type: "checkbox",
+                checklimit: 1,
+                required: true,
+                options: [
+                  { label: "Married", value: "married" },
+                  { label: "Unmarried", value: "unmarried" },
+                  { label: "other", value: "other" },
+                ],
+              },
+              {
                 name: "file",
                 placeholder: "Upload your Image",
                 label: "File",

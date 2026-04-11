@@ -13,6 +13,8 @@ interface inputField {
   maxFiles?: number;
   selectlabel?: string;
   accept?: string;
+  options?: { label: string; value: string }[];
+  checklimit?: number;
 }
 
 interface LoaderType {
@@ -107,10 +109,17 @@ function Formbox(props: Props) {
   }, [formtoogle]);
 
   const handleInputChange = (name: string, value: any) => {
-    setFormData((prevFormData) => ({
-      ...prevFormData,
-      [name]: value,
-    }));
+    setFormData((prevFormData) => {
+      const currentValue = prevFormData[name];
+
+      const newValue =
+        typeof value === "function" ? value(currentValue) : value;
+
+      return {
+        ...prevFormData,
+        [name]: newValue,
+      };
+    });
   };
 
   const handleSubmitFn = (e: React.FormEvent<HTMLFormElement>) => {

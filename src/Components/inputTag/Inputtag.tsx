@@ -11,6 +11,8 @@ interface inputField {
   selectlabel?: string;
   accept?: string;
   className?: string[];
+  options?: { label: string; value: string }[];
+  checklimit?: number;
 }
 
 interface FormErrors {
@@ -35,6 +37,8 @@ function Inputtag(props: Props) {
     type,
     arialabel,
     maxFiles = 1,
+    options = [],
+    checklimit = 1,
   } = textfield;
 
   const [fileError, setFileError] = useState<string>("");
@@ -43,7 +47,26 @@ function Inputtag(props: Props) {
 
   // ✅ Dedicated handler for normal inputs
   const handleTextChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    onChange(name, e.target.value);
+    const { value, checked, type } = e.target;
+
+    if (type === "checkbox") {
+      onChange(name, (prev: string[] = []) => {
+        const safePrev = Array.isArray(prev) ? prev : [];
+        console.log(checklimit, safePrev.length);
+
+        if (checked) {
+          // limit check
+          if (safePrev.length >= checklimit) {
+            return safePrev; //  ignore extra selection
+          }
+          return [...safePrev, value]; //  add
+        } else {
+          return safePrev.filter((item) => item !== value); // remove
+        }
+      });
+    } else {
+      onChange(name, value);
+    }
   };
 
   // ✅ Dedicated handler for file inputs
@@ -180,8 +203,37 @@ function Inputtag(props: Props) {
         </div>
       )}
 
+      {(type === "checkbox" || type === "radio") &&
+        options?.map((option, index) => (
+          <label
+            key={option.value || index}
+            className="flex items-center gap-2"
+          >
+            <input
+              className={baseInputClass}
+              type={type}
+              id={`${name}-${option.value}`}
+              name={name}
+              value={option.value}
+              checked={
+                type === "checkbox"
+                  ? Array.isArray(value) && value.includes(option.value)
+                  : value === option.value
+              }
+              onChange={handleTextChange}
+              disabled={
+                type === "checkbox" &&
+                Array.isArray(value) &&
+                value.length >= checklimit &&
+                !value.includes(option.value) // allow unchecking
+              }
+            />
+            <span className="text-sm text-gray-700">{option.label}</span>
+          </label>
+        ))}
+
       {/* ───── NORMAL INPUT ───── */}
-      {type !== "file" && (
+      {type !== "file" && type !== "checkbox" && type !== "radio" && (
         <input
           className={baseInputClass}
           type={type || "text"}
