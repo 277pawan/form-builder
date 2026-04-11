@@ -11,6 +11,8 @@ interface inputField {
   className?: string[];
   arialabel?: string;
   maxFiles?: number;
+  selectlabel?: string;
+  accept?: string;
 }
 
 interface LoaderType {

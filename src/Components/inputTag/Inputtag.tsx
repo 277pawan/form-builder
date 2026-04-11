@@ -8,6 +8,9 @@ interface inputField {
   required?: boolean;
   arialabel?: string;
   maxFiles?: number;
+  selectlabel?: string;
+  accept?: string;
+  className?: string[];
 }
 
 interface FormErrors {
@@ -107,7 +110,7 @@ function Inputtag(props: Props) {
             <span className="text-sm text-blue-600 font-medium mt-1">
               {Array.isArray(value) && value.length >= maxFiles
                 ? `Maximum ${maxFiles} file${maxFiles > 1 ? "s" : ""} reached`
-                : `Click to upload${maxFiles > 1 ? ` (up to ${maxFiles} files)` : ""}`}
+                : `${textfield.selectlabel || "Click to upload"}${maxFiles > 1 ? ` (up to ${maxFiles} files)` : ""}`}
             </span>
             <span className="text-xs text-gray-400 mt-0.5">
               {Array.isArray(value) && value.length > 0
@@ -126,6 +129,7 @@ function Inputtag(props: Props) {
             onChange={handleFileChange}
             required={required && !(Array.isArray(value) && value.length > 0)}
             aria-label={arialabel}
+            accept={textfield.accept || "*/*"}
             disabled={Array.isArray(value) && value.length >= maxFiles}
           />
 

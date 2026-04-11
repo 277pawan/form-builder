@@ -8,9 +8,7 @@ function App() {
   const [count, setCount] = useState(0);
   const [firstform, setfirstform] = useState<boolean>(false);
   const [secondform, setsecondform] = useState<boolean>(false);
-  const [productId, setproductId] = useState<string>("");
   const [loader, setLoader] = useState<boolean>(false);
-  // const [secondform, setsecondform] = useState<Boolean>(false);
 
   const validationSchema = z.object({
     firstname: z
@@ -40,7 +38,7 @@ function App() {
     ),
   });
 
-  const handlesubmit = (data: any, e: React.MouseEvent) => {
+  const handlesubmit = (data: unknown, e: React.MouseEvent) => {
     e.preventDefault();
     setLoader(true);
     setTimeout(() => {
@@ -117,6 +115,8 @@ function App() {
                 type: "file",
                 arialabel: "File",
                 maxFiles: 2,
+                selectlabel: "Select File pdf or image",
+                accept: ".pdf, image/*",
                 className: [
                   "border-2 border-dotted border-gray-400 p-2 rounded-lg bg-gray-100",
                 ],
