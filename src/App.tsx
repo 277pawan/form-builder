@@ -4,6 +4,7 @@ import viteLogo from "/vite.svg";
 import "./App.css";
 import Formbox from "./Components/formbox/Formbox";
 import { z } from "zod";
+import { Eye, EyeClosed, EyeOff } from "lucide-react";
 function App() {
   const [count, setCount] = useState(0);
   const [firstform, setfirstform] = useState<boolean>(false);
@@ -83,7 +84,7 @@ function App() {
         {firstform ? (
           <Formbox
             className={[
-              "bg-gray-200 border-1 border-gray-100 rounded-lg shadow-md",
+              "bg-gray-200 border-1 max-w-xl border-gray-100 rounded-lg shadow-md",
             ]}
             formtoogle={setfirstform}
             validationSchema={validationSchema}
@@ -100,6 +101,22 @@ function App() {
                 label: "FirstName",
                 required: true,
                 type: "text",
+              },
+              {
+                name: "password",
+                placeholder: "Enter your password...",
+                label: "Password",
+                type: "password",
+                required: true,
+                passwordToggle: true,
+                icon: { show: Eye, hide: EyeOff },
+                iconPosition: "right",
+              },
+              {
+                name: "search",
+                placeholder: "Search your profession...",
+                label: "Search",
+                type: "search",
               },
               {
                 name: "age",

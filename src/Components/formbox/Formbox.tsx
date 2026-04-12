@@ -15,6 +15,9 @@ interface inputField {
   accept?: string;
   options?: { label: string; value: string }[];
   checklimit?: number;
+  passwordToggle?: boolean;
+  icon?: { show: React.ComponentType; hide: React.ComponentType };
+  iconPosition?: "left" | "right";
 }
 
 interface LoaderType {
