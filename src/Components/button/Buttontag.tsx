@@ -110,7 +110,7 @@ function Buttontag(props: Props) {
                 ? className.join(" ")
                 : "mt-2 text-md tracking-wide bg-[#0878ce] hover:bg-[#2a6898] m-auto"
             }
-            onClick={(e) => action(true, e)}
+            onClick={(e) => action && action(true, e)}
             aria-label={arialabel}
           >
             Yes
@@ -126,7 +126,7 @@ function Buttontag(props: Props) {
                 ? className.join(" ")
                 : "mt-2 text-md font-medium text-[#3089cd] bg-gray-200 tracking-wide"
             }
-            onClick={(e) => action(false, e)}
+            onClick={(e) => action && action(false, e)}
             aria-label={arialabel}
           >
             Cancel

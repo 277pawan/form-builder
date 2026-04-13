@@ -18,7 +18,6 @@ interface inputField {
     show?: React.ComponentType;
     hide?: React.ComponentType;
   };
-  iconPosition?: "left" | "right";
 }
 
 interface FormErrors {
@@ -104,8 +103,6 @@ function Inputtag(props: Props) {
     if (type === "checkbox") {
       onChange(name, (prev: string[] = []) => {
         const safePrev = Array.isArray(prev) ? prev : [];
-        console.log(checklimit, safePrev.length);
-
         if (checked) {
           // limit check
           if (safePrev.length >= checklimit) {

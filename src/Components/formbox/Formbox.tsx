@@ -17,7 +17,6 @@ interface inputField {
   checklimit?: number;
   passwordToggle?: boolean;
   icon?: { show: React.ComponentType; hide: React.ComponentType };
-  iconPosition?: "left" | "right";
 }
 
 interface LoaderType {
@@ -169,11 +168,11 @@ function Formbox(props: Props) {
           setFormErrors(errors);
           return;
         } else {
-          submitButton.function(formData, e as any);
+          submitButton.function?.(formData, e as any);
           setFormErrors({});
         }
       } else {
-        submitButton.function(formData, e as any);
+        submitButton.function?.(formData, e as any);
         setFormErrors({});
       }
     }

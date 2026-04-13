@@ -4,7 +4,7 @@ import viteLogo from "/vite.svg";
 import "./App.css";
 import Formbox from "./Components/formbox/Formbox";
 import { z } from "zod";
-import { Eye, EyeClosed, EyeOff } from "lucide-react";
+import { Eye, EyeOff } from "lucide-react";
 function App() {
   const [count, setCount] = useState(0);
   const [firstform, setfirstform] = useState<boolean>(false);
@@ -110,7 +110,6 @@ function App() {
                 required: true,
                 passwordToggle: true,
                 icon: { show: Eye, hide: EyeOff },
-                iconPosition: "right",
               },
               {
                 name: "search",
