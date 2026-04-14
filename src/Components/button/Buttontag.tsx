@@ -52,6 +52,22 @@ function Buttontag(props: Props) {
 
   return (
     <>
+      {value.type === "button" && (
+        <ButtonWrapper>
+          <button
+            className={
+              className
+                ? className.join(" ")
+                : "relative z-50 text-md tracking-wide bg-[#0878ce] hover:bg-[#2a6898]"
+            }
+            type={value.type}
+            onClick={(e) => action && action(null, e)}
+            aria-label={arialabel}
+          >
+            {value.name}
+          </button>
+        </ButtonWrapper>
+      )}
       {value.type === "reset" && (
         <ButtonWrapper>
           <button

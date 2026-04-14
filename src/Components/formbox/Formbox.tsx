@@ -25,7 +25,7 @@ interface LoaderType {
 }
 interface Button {
   name: string;
-  type: "submit" | "reset" | "cancel" | "ok";
+  type: "submit" | "reset" | "cancel" | "ok" | "button";
   className?: string[];
   function?: (data: any, e: React.MouseEvent) => void;
   arialabel?: string;
