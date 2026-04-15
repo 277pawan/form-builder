@@ -11,20 +11,26 @@ interface inputField {
   className?: string[];
   arialabel?: string;
   maxFiles?: number;
+  selectlabel?: string;
+  accept?: string;
+  options?: { label: string; value: string }[];
+  checklimit?: number;
+  passwordToggle?: boolean;
+  icon?: { show: React.ComponentType; hide: React.ComponentType };
 }
 
 interface LoaderType {
   loader: boolean;
-  className: string[];
+  className?: string[];
 }
 interface Button {
   name: string;
-  type: "submit" | "reset" | "cancel" | "ok";
-  label?: string;
+  type: "submit" | "reset" | "cancel" | "ok" | "button";
   className?: string[];
-  function: (data: any, e: React.MouseEvent) => void;
+  function?: (data: any, e: React.MouseEvent) => void;
   arialabel?: string;
   tooltip?: string;
+  disabled?: boolean;
   loader?: LoaderType;
 }
 
@@ -62,17 +68,33 @@ function Formbox(props: Props) {
     [key: string]: any;
   }>({});
   const formref = useRef<HTMLDivElement>(null);
-  console.log(formData);
+  const submitLoader = buttons?.find((b) => b.type === "submit")?.loader
+    ?.loader;
+  const prevLoaderRef = useRef<boolean>(false);
+
+  useEffect(() => {
+    // Trigger reset only when loader goes from true → false
+    if (prevLoaderRef.current === true && submitLoader === false) {
+      setFormData(initialFormData);
+      setFormErrors({});
+    }
+    prevLoaderRef.current = submitLoader ?? false;
+  }, [submitLoader, initialFormData]);
+
   useEffect(() => {
     if (textfield && textfield.length > 0) {
       const initialData: { [key: string]: any } = {};
       textfield.forEach((field) => {
         initialData[field.name] = "";
       });
-      setFormData(initialData);
       setInitialFormData(initialData);
+      // 👇 Only set formData on first mount, not on every re-render
+      setFormData((prev) => {
+        const hasData = Object.keys(prev).length > 0;
+        return hasData ? prev : initialData;
+      });
     }
-  }, [textfield]);
+  }, []); // 👈 empty dependency — run only once on mount
 
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
@@ -89,11 +111,17 @@ function Formbox(props: Props) {
   }, [formtoogle]);
 
   const handleInputChange = (name: string, value: any) => {
-    console.log(name, value);
-    setFormData((prevFormData) => ({
-      ...prevFormData,
-      [name]: value,
-    }));
+    setFormData((prevFormData) => {
+      const currentValue = prevFormData[name];
+
+      const newValue =
+        typeof value === "function" ? value(currentValue) : value;
+
+      return {
+        ...prevFormData,
+        [name]: newValue,
+      };
+    });
   };
 
   const handleSubmitFn = (e: React.FormEvent<HTMLFormElement>) => {
@@ -101,7 +129,37 @@ function Formbox(props: Props) {
     const submitButton = buttons?.find((button) => button.type === "submit");
     if (submitButton) {
       if (validationSchema) {
-        const validationData = validationSchema.safeParse(formData);
+        const processedData: { [key: string]: any } = { ...formData };
+
+        // Collect non-required field names
+        const nonRequiredFields: string[] = [];
+
+        textfield?.forEach((field) => {
+          if (field.required === false || field.required === undefined) {
+            nonRequiredFields.push(field.name);
+            processedData[field.name] = undefined; // 👈 this is the key fix
+          }
+          // Coerce number fields
+          if (field.type === "number" && processedData[field.name] !== "") {
+            processedData[field.name] = Number(processedData[field.name]);
+          }
+        });
+
+        // Dynamically make non-required fields optional in the schema
+        const schemaShape = validationSchema.shape;
+        const updatedShape: { [key: string]: z.ZodTypeAny } = {};
+
+        Object.keys(schemaShape).forEach((key) => {
+          if (nonRequiredFields.includes(key)) {
+            updatedShape[key] = schemaShape[key].optional(); // 👈 make it optional
+          } else {
+            updatedShape[key] = schemaShape[key];
+          }
+        });
+
+        const adjustedSchema = z.object(updatedShape);
+        const validationData = adjustedSchema.safeParse(processedData);
+
         if (!validationData.success) {
           const errors: any = {};
           validationData.error.errors.forEach((err) => {
@@ -110,11 +168,11 @@ function Formbox(props: Props) {
           setFormErrors(errors);
           return;
         } else {
-          submitButton.function(formData, e as any);
+          submitButton.function?.(formData, e as any);
           setFormErrors({});
         }
       } else {
-        submitButton.function(formData, e as any);
+        submitButton.function?.(formData, e as any);
         setFormErrors({});
       }
     }
@@ -186,6 +244,7 @@ function Formbox(props: Props) {
                   action={data.function}
                   tooltip={data.tooltip}
                   arialabel={data.arialabel}
+                  disabled={data.disabled}
                   loader={data.loader}
                 />
               ))}
