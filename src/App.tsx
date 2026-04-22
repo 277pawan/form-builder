@@ -112,17 +112,25 @@ function App() {
                 icon: { show: Eye, hide: EyeOff },
               },
               {
-                name: "search",
-                placeholder: "Search your profession...",
-                label: "Search",
-                type: "search",
-              },
-              {
                 name: "age",
                 placeholder: "Enter your age...",
                 label: "Age",
                 type: "number",
                 required: true,
+              },
+              {
+                name: "Role",
+                label: "Select your Role",
+                type: "select",
+                searchable: true,
+                maxSelect: 3,
+                required: true,
+                className: ["w-full border-2 border-blue-700 rounded-md p-2"],
+                options: [
+                  { label: "Admin", value: "admin" },
+                  { label: "User", value: "user" },
+                  { label: "Editor", value: "editor" },
+                ],
               },
               {
                 name: "marritalStatus?",
@@ -136,19 +144,19 @@ function App() {
                   { label: "other", value: "other" },
                 ],
               },
-              {
-                name: "file",
-                placeholder: "Upload your Image",
-                label: "File",
-                type: "file",
-                arialabel: "File",
-                maxFiles: 2,
-                selectlabel: "Select File pdf or image",
-                accept: ".pdf, image/*",
-                className: [
-                  "border-2 border-dotted border-gray-400 p-2 rounded-lg bg-gray-100",
-                ],
-              },
+              // {
+              //   name: "file",
+              //   placeholder: "Upload your Image",
+              //   label: "File",
+              //   type: "file",
+              //   arialabel: "File",
+              //   maxFiles: 2,
+              //   selectlabel: "Select File pdf or image",
+              //   accept: ".pdf, image/*",
+              //   className: [
+              //     "border-2 border-dotted border-gray-400 p-2 rounded-lg bg-gray-100",
+              //   ],
+              // },
             ]}
             buttons={[
               {
@@ -168,7 +176,6 @@ function App() {
                 },
               },
             ]}
-            //            validationSchema={validationSchema}
           />
         ) : (
           ""

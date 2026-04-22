@@ -43,7 +43,7 @@ function Buttontag(props: Props) {
       {children}
       {/* Tooltip */}
       {!loader?.loader && tooltip && (
-        <span className="tooltip absolute -top-10 left-1/2 -translate-x-1/2 bg-black text-white text-sm rounded py-1 px-2 whitespace-nowrap opacity-0 group-hover:opacity-100 transition-all duration-300 ease-in-out z-50">
+        <span className="tooltip absolute -top-10 left-1/2 -translate-x-1/2 bg-black text-white text-sm rounded py-1 px-2 opacity-0 whitespace-nowrap group-hover:opacity-100 transition-all duration-300 ease-in-out z-40">
           {tooltip}
         </span>
       )}
@@ -74,7 +74,7 @@ function Buttontag(props: Props) {
             className={
               className
                 ? className.join(" ")
-                : "relative z-50 text-md font-medium text-[#3089cd] bg-gray-200 tracking-wide"
+                : "relative text-md font-medium text-[#3089cd] bg-gray-200 tracking-wide"
             }
             type={value.type}
             onClick={handleResetFn}

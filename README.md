@@ -46,7 +46,7 @@ root.render(
 
 ### User-Forms
 
-````javascript
+```javascript
 import Formbox from "react-form-toaster";
 import "react-form-toaster/dist/dist/tailwind.css";
 
@@ -142,13 +142,11 @@ import "react-form-toaster/dist/dist/tailwind.css";
           ""
         )}
 
-```javascript
 const handlesubmit = (data: any, e: React.MouseEvent) => {
   e.preventDefault();
   console.log(data);
 };
 ```
-````
 
 #### Zod Validation
 

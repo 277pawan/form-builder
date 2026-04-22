@@ -1,4 +1,5 @@
 import React, { useRef, useState } from "react";
+import CustomSelect from "../customSelect/customSelect.tsx";
 
 interface inputField {
   name: string;
@@ -14,6 +15,8 @@ interface inputField {
   options?: { label: string; value: string }[];
   checklimit?: number;
   passwordToggle?: boolean;
+  searchable?: boolean;
+  maxSelect?: number;
   icon?: {
     show?: React.ComponentType;
     hide?: React.ComponentType;
@@ -46,6 +49,8 @@ function Inputtag(props: Props) {
     checklimit = 1,
     passwordToggle = false,
     icon,
+    searchable = false,
+    maxSelect = 2,
   } = textfield;
 
   const [fileError, setFileError] = useState<string>("");
@@ -149,9 +154,9 @@ function Inputtag(props: Props) {
     if (fileInputRef.current) fileInputRef.current.value = "";
   };
 
-  const baseInputClass = `p-2 w-full border-2 my-1 rounded text-black transition-colors
+  const baseInputClass = `p-2 w-full border-2 my-1 rounded-md text-black transition-colors
   ${className ? className.join(" ") : ""}
-  border-gray-400 bg-gray-100 focus:outline-none focus:border-blue-500 focus:bg-white
+  border-gray-400 bg-white focus:outline-none focus:border-blue-500 focus:bg-white
   [&::-ms-reveal]:block [&::-webkit-credentials-auto-fill-button]:visible`;
 
   return (
@@ -286,6 +291,8 @@ function Inputtag(props: Props) {
       {type !== "file" &&
         type !== "checkbox" &&
         type !== "radio" &&
+        type !== "select" &&
+        type !== "multiselect" &&
         (type === "password" && passwordToggle ? (
           <div className="relative w-full">
             <input
@@ -322,6 +329,21 @@ focus:outline-none focus:ring-0"
             onChange={handleTextChange}
           />
         ))}
+
+      {(type === "select" || type === "multiselect") && (
+        <CustomSelect
+          name={name}
+          options={options}
+          value={value}
+          onChange={onChange}
+          multiple={type === "multiselect"}
+          placeholder={textfield.placeholder}
+          searchable={searchable}
+          //          showInvert={true}
+          maxSelect={maxSelect}
+          className={className}
+        />
+      )}
 
       {/* Validation errors */}
       {formErrors && formErrors[name] && (

@@ -16,6 +16,8 @@ interface inputField {
   options?: { label: string; value: string }[];
   checklimit?: number;
   passwordToggle?: boolean;
+  searchable?: boolean;
+  maxSelect?: number;
   icon?: { show: React.ComponentType; hide: React.ComponentType };
 }
 
@@ -149,9 +151,14 @@ function Formbox(props: Props) {
         const schemaShape = validationSchema.shape;
         const updatedShape: { [key: string]: z.ZodTypeAny } = {};
 
-        Object.keys(schemaShape).forEach((key) => {
-          if (nonRequiredFields.includes(key)) {
-            updatedShape[key] = schemaShape[key].optional(); // 👈 make it optional
+        // 👉 ONLY include fields present in UI
+        textfield?.forEach((field) => {
+          const key = field.name;
+
+          if (!schemaShape[key]) return; // skip if not in schema
+
+          if (field.required === false || field.required === undefined) {
+            updatedShape[key] = schemaShape[key].optional();
           } else {
             updatedShape[key] = schemaShape[key];
           }
