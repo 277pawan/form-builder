@@ -147,6 +147,7 @@ const handlesubmit = (data: any, e: React.MouseEvent) => {
   e.preventDefault();
   console.log(data);
 };
+```
 ````
 
 #### Zod Validation
@@ -217,18 +218,18 @@ The following tables detail all available attributes for each component in React
 ### TextField Component Attributes
 
 | Attribute        | Type     | Description                                                            | Example                                                                              |
-| ---------------- | -------- | ---------------------------------------------------------------------- | ------------------------------------------------------------------------------------ | --------------------------- |
+| ---------------- | -------- | ---------------------------------------------------------------------- | ------------------------------------------------------------------------------------ |
 | `name`           | string   | Input field name                                                       | "firstname"                                                                          |
 | `placeholder`    | string   | Placeholder text                                                       | "Enter your Firstname..."                                                            |
 | `label`          | string   | Label text                                                             | "FirstName"                                                                          |
 | `type`           | string   | Input type (text, number, file, etc.)                                  | "number"                                                                             |
 | `required`       | boolean  | Whether field is required                                              | true                                                                                 |
 | `arialabel`      | string   | Accessibility label                                                    | "FileUpload"                                                                         |
-| accept           | string   | Accepted file types (for file input)                                   | ".pdf, image/\*"                                                                     |
+| `accept`         | string   | Accepted file types (for file input)                                   | ".pdf, image/\*"                                                                     |
 | `maxFiles`       | number   | Maximum number of files (for file input)                               | 5                                                                                    |
 | `selectlabel`    | string   | Label for file selection (for file input)                              | "Select File pdf or image"                                                           |
 | `passwordToggle` | boolean  | Whether to show password toggle icon (for password input)              | true                                                                                 |
-| `icon`           | Object   | Icons for password toggle (for password input)                         |                                                                                      | { show: Eye, hide: EyeOff } |
+| `icon`           | Object   | Icons for password toggle (for password input)                         | { show: Eye, hide: EyeOff }                                                          |
 | `checklimit`     | number   | Maximum number of checkboxes that can be selected (for checkbox input) | 1                                                                                    |
 | `options`        | Object[] | Options for checkbox input                                             | [{ label: "Married", value: "married" }, { label: "Unmarried", value: "unmarried" }] |
 | `className`      | string[] | Custom classes for the input field                                     | ["border-gray-300"]                                                                  |
