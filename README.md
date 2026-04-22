@@ -46,56 +46,108 @@ root.render(
 
 ### User-Forms
 
-```javascript
+````javascript
 import Formbox from "react-form-toaster";
 import "react-form-toaster/dist/dist/tailwind.css";
-<Formbox
-  formtoogle={setfirstform}
-  formtitle={[
-    {
-      title: "Form-Builder",
-      className: ["text-2xl font-bold "],
-    },
-  ]}
-  textfield={[
-    {
-      name: "firstname",
-      placeholder: "Enter your Firstname",
-      label: "FirstName",
-      required: false,
-      // type: "text"
-    },
-    {
-      name: "age",
-      placeholder: "Enter your age",
-      label: "Age",
-      type: "number",
-    },
-  ]}
-  buttons={[
-    {
-      name: "Submit",
-      type: "submit",
-      label: "Submitbutton",
-      function: handlesubmit,
-    },
-    {
-      name: "Reset",
-      type: "reset",
-      label: "Submitbutton",
-      function: handlesubmit,
-    },
-  ]}
-  validationSchema={validationSchema}
-/>;
-```
+
+          <Formbox
+            className={[
+              "bg-gray-200 border-1 max-w-xl border-gray-100 rounded-lg shadow-md",
+            ]}
+            formtoogle={setfirstform}
+            validationSchema={validationSchema}
+            formtitle={[
+              {
+                title: "Form-Builder",
+                className: ["text-2xl font-bold text-black "],
+              },
+            ]}
+            textfield={[
+              {
+                name: "firstname",
+                placeholder: "Enter your Firstname...",
+                label: "FirstName",
+                required: true,
+                type: "text",
+              },
+              {
+                name: "password",
+                placeholder: "Enter your password...",
+                label: "Password",
+                type: "password",
+                required: true,
+                passwordToggle: true,
+                icon: { show: Eye, hide: EyeOff },
+              },
+              {
+                name: "search",
+                placeholder: "Search your profession...",
+                label: "Search",
+                type: "search",
+              },
+              {
+                name: "age",
+                placeholder: "Enter your age...",
+                label: "Age",
+                type: "number",
+                required: true,
+              },
+              {
+                name: "marritalStatus?",
+                label: "Marital Status",
+                type: "checkbox",
+                checklimit: 1,
+                required: true,
+                options: [
+                  { label: "Married", value: "married" },
+                  { label: "Unmarried", value: "unmarried" },
+                  { label: "other", value: "other" },
+                ],
+              },
+              {
+                name: "file",
+                placeholder: "Upload your Image",
+                label: "File",
+                type: "file",
+                arialabel: "File",
+                maxFiles: 2,
+                selectlabel: "Select File pdf or image",
+                accept: ".pdf, image/*",
+                className: [
+                  "border-2 border-dotted border-gray-400 p-2 rounded-lg bg-gray-100",
+                ],
+              },
+            ]}
+            buttons={[
+              {
+                name: "Reset Button",
+                type: "reset",
+                arialabel: "reset_button",
+                tooltip: "Reset Button",
+              },
+              {
+                name: "Submit",
+                type: "submit",
+                arialabel: "Submit_button",
+                tooltip: "Submit Button",
+                function: handlesubmit,
+                loader: {
+                  loader: loader,
+                },
+              },
+            ]}
+            validationSchema={validationSchema}
+          />
+        ) : (
+          ""
+        )}
 
 ```javascript
 const handlesubmit = (data: any, e: React.MouseEvent) => {
   e.preventDefault();
   console.log(data);
 };
-```
+````
 
 #### Zod Validation
 
@@ -160,38 +212,51 @@ The following tables detail all available attributes for each component in React
 | `buttons`          | Object[] | Button configurations                         | No       |
 | `message`          | Object[] | Message configurations for confirmation forms | No       |
 | `validationSchema` | Object   | Zod validation schema                         | No       |
+| `loader`           | boolean  | Whether to show loader on submit              | No       |
 
 ### TextField Component Attributes
 
-| Attribute     | Type    | Description                           | Example                   |
-| ------------- | ------- | ------------------------------------- | ------------------------- |
-| `name`        | string  | Input field name                      | "firstname"               |
-| `placeholder` | string  | Placeholder text                      | "Enter your Firstname..." |
-| `label`       | string  | Label text                            | "FirstName"               |
-| `type`        | string  | Input type (text, number, file, etc.) | "number"                  |
-| `required`    | boolean | Whether field is required             | true                      |
-| `arialabel`   | string  | Accessibility label                   | "FileUpload"              |
+| Attribute        | Type     | Description                                                            | Example                                                                              |
+| ---------------- | -------- | ---------------------------------------------------------------------- | ------------------------------------------------------------------------------------ | --------------------------- |
+| `name`           | string   | Input field name                                                       | "firstname"                                                                          |
+| `placeholder`    | string   | Placeholder text                                                       | "Enter your Firstname..."                                                            |
+| `label`          | string   | Label text                                                             | "FirstName"                                                                          |
+| `type`           | string   | Input type (text, number, file, etc.)                                  | "number"                                                                             |
+| `required`       | boolean  | Whether field is required                                              | true                                                                                 |
+| `arialabel`      | string   | Accessibility label                                                    | "FileUpload"                                                                         |
+| accept           | string   | Accepted file types (for file input)                                   | ".pdf, image/\*"                                                                     |
+| `maxFiles`       | number   | Maximum number of files (for file input)                               | 5                                                                                    |
+| `selectlabel`    | string   | Label for file selection (for file input)                              | "Select File pdf or image"                                                           |
+| `passwordToggle` | boolean  | Whether to show password toggle icon (for password input)              | true                                                                                 |
+| `icon`           | Object   | Icons for password toggle (for password input)                         |                                                                                      | { show: Eye, hide: EyeOff } |
+| `checklimit`     | number   | Maximum number of checkboxes that can be selected (for checkbox input) | 1                                                                                    |
+| `options`        | Object[] | Options for checkbox input                                             | [{ label: "Married", value: "married" }, { label: "Unmarried", value: "unmarried" }] |
+| `className`      | string[] | Custom classes for the input field                                     | ["border-gray-300"]                                                                  |
 
 ### File Upload Specific Attributes
 
-| Attribute          | Type        | Description                 | Example                |
-| ------------------ | ----------- | --------------------------- | ---------------------- |
-| `number`           | number      | Maximum number of files     | 5                      |
-| `preview`          | string      | Preview type ("image")      | "image"                |
-| `previewClassName` | string[]    | Classes for preview element | ["h-32 w-32"]          |
-| `icon`             | JSX.Element | Icon for removing files     | `<RiCloseLargeLine />` |
+| Attribute     | Type        | Description                   | Example                                                               |
+| ------------- | ----------- | ----------------------------- | --------------------------------------------------------------------- |
+| `number`      | number      | Maximum number of files       | 5                                                                     |
+| `icon`        | JSX.Element | Icon for removing files       | `<RiCloseLargeLine />`                                                |
+| `selectlabel` | string      | Label for file selection      | "Select File pdf or image"                                            |
+| `accept`      | string      | Accepted file types           | ".pdf, image/\*"                                                      |
+| `arialabel`   | string      | Accessibility label           | "FileUpload"                                                          |
+| `className`   | string[]    | Custom classes for file input | ["border-2 border-dotted border-gray-400 p-2 rounded-lg bg-gray-100"] |
+| maxfiles      | number      | Maximum number of files       | 5                                                                     |
 
 ### Button Component Attributes
 
-| Attribute   | Type     | Description                             | Example         |
-| ----------- | -------- | --------------------------------------- | --------------- |
-| `name`      | string   | Button text                             | "Submit"        |
-| `type`      | string   | Button type (submit, reset, ok, cancel) | "submit"        |
-| `label`     | string   | ARIA label                              | "Submitbutton"  |
-| `function`  | Function | Click handler                           | handlesubmit    |
-| `className` | string[] | Custom classes                          | ["bg-red-600"]  |
-| `arialabel` | string   | Accessibility label                     | "Submit_button" |
-| `tooltip`   | string   | Tooltip text                            | "Submit Form"   |
+| Attribute   | Type     | Description                             | Example                                         |
+| ----------- | -------- | --------------------------------------- | ----------------------------------------------- |
+| `name`      | string   | Button text                             | "Submit"                                        |
+| `type`      | string   | Button type (submit, reset, ok, cancel) | "submit"                                        |
+| `label`     | string   | ARIA label                              | "Submitbutton"                                  |
+| `function`  | Function | Click handler                           | handlesubmit                                    |
+| `className` | string[] | Custom classes                          | ["bg-red-600"]                                  |
+| `arialabel` | string   | Accessibility label                     | "Submit_button"                                 |
+| `tooltip`   | string   | Tooltip text                            | "Submit Form"                                   |
+| loader      | Object   | Loader configuration for submit button  | { loader: true, className: ["border-red-500"] } |
 
 ### Loader Component Attributes
 
