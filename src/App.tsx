@@ -96,7 +96,7 @@ function App() {
                 className: ["text-2xl text-center font-bold text-blue-500 "],
               },
             ]}
-            closeFormIcon={false}
+            closeFormIcon={true}
             textfield={[
               {
                 name: "firstname",
