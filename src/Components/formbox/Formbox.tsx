@@ -2,6 +2,8 @@ import React, { SetStateAction, useEffect, useRef, useState } from "react";
 import Inputtag from "../inputTag/Inputtag";
 import Buttontag from "../button/Buttontag";
 import { z } from "zod";
+import { mergeClasses } from "../../utils/mergeClasses";
+
 interface inputField {
   name: string;
   placeholder?: string;
@@ -29,7 +31,7 @@ interface Button {
   name: string;
   type: "submit" | "reset" | "cancel" | "ok" | "button";
   className?: string[];
-  function?: (data: any, e: React.MouseEvent) => void;
+  function?: (data: unknown, e: React.MouseEvent) => void;
   arialabel?: string;
   tooltip?: string;
   disabled?: boolean;
@@ -67,7 +69,7 @@ function Formbox(props: Props) {
   const [formData, setFormData] = useState<{ [key: string]: any }>({});
   const [formErrors, setFormErrors] = useState<{ [key: string]: any }>({});
   const [initialFormData, setInitialFormData] = useState<{
-    [key: string]: any;
+    [key: string]: unknown;
   }>({});
   const formref = useRef<HTMLDivElement>(null);
   const submitLoader = buttons?.find((b) => b.type === "submit")?.loader
@@ -85,7 +87,7 @@ function Formbox(props: Props) {
 
   useEffect(() => {
     if (textfield && textfield.length > 0) {
-      const initialData: { [key: string]: any } = {};
+      const initialData: { [key: string]: unknown } = {};
       textfield.forEach((field) => {
         initialData[field.name] = "";
       });
@@ -112,7 +114,7 @@ function Formbox(props: Props) {
     };
   }, [formtoogle]);
 
-  const handleInputChange = (name: string, value: any) => {
+  const handleInputChange = (name: string, value: unknown) => {
     setFormData((prevFormData) => {
       const currentValue = prevFormData[name];
 
@@ -124,65 +126,88 @@ function Formbox(props: Props) {
         [name]: newValue,
       };
     });
+
+    // Clear error for this field when user updates it
+    if (formErrors[name]) {
+      setFormErrors((prevErrors) => {
+        const updated = { ...prevErrors };
+        delete updated[name];
+        return updated;
+      });
+    }
   };
 
   const handleSubmitFn = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const submitButton = buttons?.find((button) => button.type === "submit");
-    if (submitButton) {
-      if (validationSchema) {
-        const processedData: { [key: string]: any } = { ...formData };
+    if (!submitButton) return;
 
-        // Collect non-required field names
-        const nonRequiredFields: string[] = [];
+    const errors: { [key: string]: string } = {};
 
-        textfield?.forEach((field) => {
-          if (field.required === false || field.required === undefined) {
-            nonRequiredFields.push(field.name);
-            processedData[field.name] = undefined; // 👈 this is the key fix
-          }
-          // Coerce number fields
-          if (field.type === "number" && processedData[field.name] !== "") {
-            processedData[field.name] = Number(processedData[field.name]);
-          }
-        });
+    // 1. Prepare processed data for validation
+    const processedData: { [key: string]: unknown } = { ...formData };
 
-        // Dynamically make non-required fields optional in the schema
-        const schemaShape = validationSchema.shape;
-        const updatedShape: { [key: string]: z.ZodTypeAny } = {};
+    textfield?.forEach((field) => {
+      const val = processedData[field.name];
 
-        // 👉 ONLY include fields present in UI
-        textfield?.forEach((field) => {
-          const key = field.name;
-
-          if (!schemaShape[key]) return; // skip if not in schema
-
-          if (field.required === false || field.required === undefined) {
-            updatedShape[key] = schemaShape[key].optional();
-          } else {
-            updatedShape[key] = schemaShape[key];
-          }
-        });
-
-        const adjustedSchema = z.object(updatedShape);
-        const validationData = adjustedSchema.safeParse(processedData);
-
-        if (!validationData.success) {
-          const errors: any = {};
-          validationData.error.errors.forEach((err) => {
-            errors[err.path[0]] = err.message;
-          });
-          setFormErrors(errors);
-          return;
-        } else {
-          submitButton.function?.(formData, e as any);
-          setFormErrors({});
+      // Handle number conversion: empty string/null/undefined -> undefined
+      if (field.type === "number") {
+        if (val === "" || val === null || val === undefined) {
+          processedData[field.name] = undefined;
+        } else if (typeof val === "string") {
+          const num = Number(val);
+          processedData[field.name] = isNaN(num) ? val : num;
         }
-      } else {
-        submitButton.function?.(formData, e as any);
-        setFormErrors({});
+      }
+    });
+
+    // 2. Validate required fields defined in `textfield`
+    textfield?.forEach((field) => {
+      if (field.required) {
+        const val = processedData[field.name];
+        const isEmpty =
+          val === undefined ||
+          val === null ||
+          val === "" ||
+          (Array.isArray(val) && val.length === 0);
+
+        if (isEmpty) {
+          const labelText = field.label || field.name;
+
+          console.log("label text:-", labelText);
+          errors[field.name] = `${labelText} is required`;
+          console.log(errors);
+        }
+      }
+    });
+
+    // 3. Validate using Zod schema if provided
+    if (validationSchema) {
+      const validationResult = validationSchema.safeParse(processedData);
+
+      if (!validationResult.success) {
+        validationResult.error.errors.forEach((err) => {
+          const fieldName = String(err.path[0]);
+          if (fieldName) {
+            // Do not let generic "Required" from Zod overwrite a custom label required message
+            if (err.message === "Required" && errors[fieldName]) {
+              return;
+            }
+            errors[fieldName] = err.message;
+          }
+        });
       }
     }
+
+    // 4. If any errors exist, block submission and set errors
+    if (Object.keys(errors).length > 0) {
+      setFormErrors(errors);
+      return;
+    }
+
+    // No errors -> submit form
+    setFormErrors({});
+    submitButton.function?.(formData, e as any);
   };
 
   return (
@@ -190,57 +215,65 @@ function Formbox(props: Props) {
       <div className="absolute top-0 left-0 h-full w-full bg-gray-700 bg-opacity-10 backdrop-blur-sm"></div>
       <div
         ref={formref}
-        className={`relative z-10 bg-white p-8 md:p-8 rounded-2xl shadow-xl w-full max-w-xl mx-auto border border-gray-200 ${className ? className.join("") : ""}`}
+        className={mergeClasses("max-h-[90vh] flex flex-col relative z-10 bg-white p-6 md:p-8 rounded-2xl shadow-xl w-full max-w-xl mx-auto border border-gray-200", className)}
       >
-        <form onSubmit={handleSubmitFn} className="space-y-4">
-          {formtitle &&
-            formtitle.map((data, index) => (
-              <div
-                key={index}
-                className={
-                  data.className
-                    ? data.className.join(" ")
-                    : "text-gray-800 text-3xl font-semibold mb-4"
-                }
-              >
-                {data.title}
-              </div>
-            ))}
+        <form onSubmit={handleSubmitFn} noValidate className="flex flex-col h-full min-h-0">
+          {/* Header */}
+          {formtitle && (
+            <div className="flex-shrink-0 mb-4">
+              {formtitle.map((data, index) => (
+                <div
+                  key={index}
+                  className={
+                    data.className
+                      ? data.className.join(" ")
+                      : "text-gray-800 text-3xl font-semibold"
+                  }
+                >
+                  {data.title}
+                </div>
+              ))}
+            </div>
+          )}
 
-          {textfield &&
-            textfield.length > 0 &&
-            textfield.map((field, index) => (
-              <div
-                key={index}
-                className="flex flex-col justify-start items-start"
-              >
-                <Inputtag
-                  textfield={field}
-                  value={formData[field.name]}
-                  onChange={handleInputChange}
-                  className={field.className}
-                  formErrors={formErrors}
-                />
-              </div>
-            ))}
+          {/* Scrollable Body */}
+          <div className="flex-1 overflow-y-auto space-y-4 pr-1">
+            {textfield &&
+              textfield.length > 0 &&
+              textfield.map((field, index) => (
+                <div
+                  key={index}
+                  className="flex flex-col justify-start items-start w-full"
+                >
+                  <Inputtag
+                    textfield={field}
+                    value={formData[field.name]}
+                    onChange={handleInputChange}
+                    className={field.className}
+                    formErrors={formErrors}
+                  />
+                </div>
+              ))}
 
-          {message &&
-            message.length > 0 &&
-            message.map((data, index) => (
-              <dd
-                key={index}
-                className={
-                  data.className
-                    ? data.className.join(" ")
-                    : "text-sm text-gray-600"
-                }
-              >
-                {data.message}
-              </dd>
-            ))}
+            {message &&
+              message.length > 0 &&
+              message.map((data, index) => (
+                <dd
+                  key={index}
+                  className={
+                    data.className
+                      ? data.className.join(" ")
+                      : "text-sm text-gray-600"
+                  }
+                >
+                  {data.message}
+                </dd>
+              ))}
+          </div>
 
+          {/* Fixed Footer Buttons */}
           {buttons && (
-            <div className="pt-4 flex justify-end gap-3">
+            <div className="flex-shrink-0 pt-4 mt-2 border-t border-gray-100 flex justify-end gap-3 bg-white">
               {buttons.map((data, index) => (
                 <Buttontag
                   key={index}

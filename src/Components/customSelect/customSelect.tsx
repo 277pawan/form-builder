@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
+import { mergeClasses } from "../../utils/mergeClasses";
 
 interface Option {
   label: string;
@@ -16,7 +17,7 @@ interface CustomSelectProps {
   multiple?: boolean;
   placeholder?: string;
   disabled?: boolean;
-  className?: string[];
+  className?: string;
   searchable?: boolean;
   maxSelect?: number;
 }
@@ -29,7 +30,7 @@ export function CustomSelect({
   multiple = false,
   placeholder = "Select...",
   disabled = false,
-  className = [],
+  className = "",
   searchable = false,
   maxSelect,
 }: CustomSelectProps) {
@@ -38,10 +39,12 @@ export function CustomSelect({
   const containerRef = useRef<HTMLDivElement>(null);
   const searchRef = useRef<HTMLInputElement>(null);
 
-  const baseInputClass = `
-    p-2 w-full border-2 my-1 rounded text-black transition-colors
-    border-gray-400 bg-white focus:outline-none focus:border-blue-500 focus:bg-white
-  `;
+  const baseInputClass = mergeClasses(
+    `p-2 w-full border-2 my-1 rounded-md text-black transition-colors border-gray-400 bg-white flex items-center gap-2 cursor-pointer select-none ${
+      open ? "border-blue-500" : "hover:border-gray-500"
+    } ${disabled ? "opacity-50 cursor-not-allowed" : ""}`,
+    className,
+  );
 
   const selected = multiple
     ? Array.isArray(value)
@@ -123,17 +126,10 @@ export function CustomSelect({
   }, [open, searchable]);
 
   return (
-    <div ref={containerRef} className={`relative w-full`}>
+    <div ref={containerRef} className="relative w-full">
       <div
         onClick={() => !disabled && setOpen((o) => !o)}
-        className={`
-          ${baseInputClass}
-          flex items-center gap-2 px-2.5 py-1.5 min-h-[38px] cursor-pointer
-          border rounded transition-colors select-none
-          ${open ? "border-gray-400" : "border-gray-200 hover:border-gray-300"}
-          ${className ? className.join(" ") : ""}
-          ${disabled ? "opacity-50 cursor-not-allowed" : ""}
-        `}
+        className={baseInputClass}
       >
         <div className="flex flex-wrap gap-1 flex-1 min-w-0">
           {multiple ? (

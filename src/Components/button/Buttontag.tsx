@@ -1,5 +1,6 @@
 import React from "react";
 import "./ButtonTag.css";
+import { mergeClasses } from "../../utils/mergeClasses";
 
 interface LoaderType {
   loader: boolean;
@@ -50,16 +51,17 @@ function Buttontag(props: Props) {
     </div>
   );
 
+  const baseBtnStyle = "px-4 py-2 rounded-md font-medium text-sm transition-colors cursor-pointer";
+
   return (
     <>
       {value.type === "button" && (
         <ButtonWrapper>
           <button
-            className={
+            className={mergeClasses(
+              `${baseBtnStyle} bg-[#0878ce] text-white hover:bg-[#2a6898]`,
               className
-                ? className.join(" ")
-                : "relative z-50 text-md tracking-wide bg-[#0878ce] hover:bg-[#2a6898]"
-            }
+            )}
             type={value.type}
             onClick={(e) => action && action(null, e)}
             aria-label={arialabel}
@@ -71,11 +73,10 @@ function Buttontag(props: Props) {
       {value.type === "reset" && (
         <ButtonWrapper>
           <button
-            className={
+            className={mergeClasses(
+              `${baseBtnStyle} bg-gray-200 text-[#3089cd] hover:bg-gray-300`,
               className
-                ? className.join(" ")
-                : "relative text-md font-medium text-[#3089cd] bg-gray-200 tracking-wide"
-            }
+            )}
             type={value.type}
             onClick={handleResetFn}
             aria-label={arialabel}
@@ -88,26 +89,26 @@ function Buttontag(props: Props) {
       {value.type === "submit" && (
         <ButtonWrapper>
           <button
-            className={`${
+            className={mergeClasses(
+              `${baseBtnStyle} bg-[#0878ce] text-white hover:bg-[#2a6898] ${
+                disabled ? "opacity-50 cursor-not-allowed pointer-events-none" : ""
+              }`,
               className
-                ? className.join(" ")
-                : "text-md tracking-wide bg-[#0878ce] hover:bg-[#2a6898]"
-            } ${disabled ? "opacity-50 cursor-not-allowed pointer-events-none" : ""}`}
+            )}
             type={value.type}
             aria-label={arialabel}
             disabled={disabled}
           >
             {loader?.loader ? (
               <>
-                {" "}
                 <span className="text-md tracking-wide invisible">
                   {value.name}
                 </span>
                 <span
-                  className={`absolute left-[42%] h-6 w-6 rounded-full animate-spin ${
+                  className={`absolute left-[42%] h-5 w-5 rounded-full animate-spin ${
                     loader?.className
                       ? loader.className.join(" ")
-                      : "border-2 border-white border-t-blue-500"
+                      : "border-2 border-white border-t-transparent"
                   }`}
                 ></span>
               </>
@@ -121,11 +122,10 @@ function Buttontag(props: Props) {
       {value.type === "ok" && (
         <ButtonWrapper>
           <button
-            className={
+            className={mergeClasses(
+              `${baseBtnStyle} bg-[#0878ce] text-white hover:bg-[#2a6898]`,
               className
-                ? className.join(" ")
-                : "mt-2 text-md tracking-wide bg-[#0878ce] hover:bg-[#2a6898] m-auto"
-            }
+            )}
             onClick={(e) => action && action(true, e)}
             aria-label={arialabel}
           >
@@ -137,11 +137,10 @@ function Buttontag(props: Props) {
       {value.type === "cancel" && (
         <ButtonWrapper>
           <button
-            className={
+            className={mergeClasses(
+              `${baseBtnStyle} bg-gray-200 text-[#3089cd] hover:bg-gray-300`,
               className
-                ? className.join(" ")
-                : "mt-2 text-md font-medium text-[#3089cd] bg-gray-200 tracking-wide"
-            }
+            )}
             onClick={(e) => action && action(false, e)}
             aria-label={arialabel}
           >

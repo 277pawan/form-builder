@@ -6,11 +6,13 @@ import Formbox from "./Components/formbox/Formbox";
 import { z } from "zod";
 import { Eye, EyeOff } from "lucide-react";
 function App() {
+  // ALl States defined here of this components
   const [count, setCount] = useState(0);
   const [firstform, setfirstform] = useState<boolean>(false);
   const [secondform, setsecondform] = useState<boolean>(false);
   const [loader, setLoader] = useState<boolean>(false);
 
+  // zod validation for the form fields
   const validationSchema = z.object({
     firstname: z
       .string()
@@ -18,10 +20,9 @@ function App() {
       .min(4, { message: "First name must be at least 4 characters" }),
 
     age: z
-      .number()
-      .min(1, { message: "Age is required" }) // handles empty string
-      .refine((val) => !isNaN(Number(val)), {
-        message: "Age must be a number",
+      .number({
+        required_error: "Age is required",
+        invalid_type_error: "Age must be a number",
       })
       .refine((val) => val >= 18, {
         message: "You must be at least 18 years old",
@@ -39,6 +40,7 @@ function App() {
     ),
   });
 
+  // handle submit function for the form submission
   const handlesubmit = (data: unknown, e: React.MouseEvent) => {
     e.preventDefault();
     setLoader(true);
@@ -84,7 +86,7 @@ function App() {
         {firstform ? (
           <Formbox
             className={[
-              "bg-gray-200 border-1 max-w-xl border-gray-100 rounded-lg shadow-md",
+              "border-1 max-w-xl border-gray-100 px-6 py-3 shadow-md",
             ]}
             formtoogle={setfirstform}
             validationSchema={validationSchema}
@@ -125,7 +127,6 @@ function App() {
                 searchable: true,
                 maxSelect: 3,
                 required: true,
-                className: ["w-full border-2 border-blue-700 rounded-md p-2"],
                 options: [
                   { label: "Admin", value: "admin" },
                   { label: "User", value: "user" },
@@ -133,7 +134,7 @@ function App() {
                 ],
               },
               {
-                name: "marritalStatus?",
+                name: "marritalStatus",
                 label: "Marital Status",
                 type: "checkbox",
                 checklimit: 1,
@@ -144,19 +145,19 @@ function App() {
                   { label: "other", value: "other" },
                 ],
               },
-              // {
-              //   name: "file",
-              //   placeholder: "Upload your Image",
-              //   label: "File",
-              //   type: "file",
-              //   arialabel: "File",
-              //   maxFiles: 2,
-              //   selectlabel: "Select File pdf or image",
-              //   accept: ".pdf, image/*",
-              //   className: [
-              //     "border-2 border-dotted border-gray-400 p-2 rounded-lg bg-gray-100",
-              //   ],
-              // },
+              {
+                name: "file",
+                placeholder: "Upload your Image",
+                label: "File",
+                type: "file",
+                arialabel: "File",
+                maxFiles: 2,
+                selectlabel: "Select File pdf or image",
+                accept: ".pdf, image/*",
+                className: [
+                  "border-2 border-dotted border-gray-400 p-2 rounded-lg bg-gray-100",
+                ],
+              },
             ]}
             buttons={[
               {

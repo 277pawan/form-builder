@@ -1,5 +1,6 @@
 import React, { useRef, useState } from "react";
 import CustomSelect from "../customSelect/customSelect.tsx";
+import { mergeClasses } from "../../utils/mergeClasses";
 
 interface inputField {
   name: string;
@@ -154,10 +155,10 @@ function Inputtag(props: Props) {
     if (fileInputRef.current) fileInputRef.current.value = "";
   };
 
-  const baseInputClass = `p-2 w-full border-2 my-1 rounded-md text-black transition-colors
-  ${className ? className.join(" ") : ""}
-  border-gray-400 bg-white focus:outline-none focus:border-blue-500 focus:bg-white
-  [&::-ms-reveal]:block [&::-webkit-credentials-auto-fill-button]:visible`;
+  const baseInputClass = mergeClasses(
+    "p-2 w-full border-2 my-1 rounded-md text-black transition-colors border-gray-300 bg-white focus:outline-none focus:border-blue-500 focus:bg-white [&::-ms-reveal]:block [&::-webkit-credentials-auto-fill-button]:visible",
+    className,
+  );
 
   return (
     <>
@@ -303,7 +304,7 @@ function Inputtag(props: Props) {
               placeholder={placeholder}
               value={value ?? ""}
               onChange={handleTextChange}
-              required={required ?? true}
+              required={required}
               aria-label={arialabel}
             />
 
@@ -327,6 +328,7 @@ focus:outline-none focus:ring-0"
             placeholder={placeholder}
             value={value ?? ""}
             onChange={handleTextChange}
+            required={required}
           />
         ))}
 
@@ -341,7 +343,7 @@ focus:outline-none focus:ring-0"
           searchable={searchable}
           //          showInvert={true}
           maxSelect={maxSelect}
-          className={className}
+          className={baseInputClass}
         />
       )}
 
