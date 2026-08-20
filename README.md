@@ -2,7 +2,7 @@
 
 [![GitHub Repo](https://github.githubassets.com/favicons/favicon.png) **React-form-toaster**](https://github.com/277pawan/form-builder)
 
-![User-Form](https://cure-ten.vercel.app/static/media/ezgif.com-video-to-gif-converter.01200ebb8d2078e8d60e.gif)
+[![User Form Demo](https://res.cloudinary.com/dc30b7tnj/video/upload/so_0/form-builder_tibv9z.jpg)](https://res.cloudinary.com/dc30b7tnj/video/upload/v1787248451/form-builder_tibv9z.mp4)
 
 ![Confirmation-form](https://cure-ten.vercel.app/static/media/confirm.4b962f1dee5f2bc649cd.png)
 
@@ -62,6 +62,7 @@ import "react-form-toaster/dist/dist/tailwind.css";
                 className: ["text-2xl font-bold text-black "],
               },
             ]}
+            closeFormIcon={true} // Set to true to display the close icon, false to hide it
             textfield={[
               {
                 name: "firstname",
@@ -206,6 +207,7 @@ The following tables detail all available attributes for each component in React
 | ------------------ | -------- | --------------------------------------------- | -------- |
 | `className`        | string[] | Custom classes for the form container         | No       |
 | `formtoogle`       | Function | Function to toggle form visibility            | Yes      |
+| `closeFormIcon`    | boolean  | Boolean to toggle between showing closeIcon   | No       |
 | `formtitle`        | Object[] | Form title configuration                      | No       |
 | `textfield`        | Object[] | Text input field configurations               | No       |
 | `buttons`          | Object[] | Button configurations                         | No       |
@@ -273,7 +275,16 @@ The following tables detail all available attributes for each component in React
 
 ## Contribute
 
-Show your ❤️ and support by giving a ⭐. Any suggestions are welcome! Take a look at the contributing guide.
-You can also find me on Github [**277pawan**](https://github.com/277pawan).
+### ❤️ Like This Project?
 
-**Free Library, Happy Coding😎😎!**
+If this project helped you save time, understand something new, or simply made your life a little easier, consider showing your support by giving it a ⭐ **Star**.
+
+It may take just a second, but every ⭐ motivates me to keep improving the project, fixing issues, and creating more useful resources for the community.
+
+Found something that could be better? **I'd genuinely love to hear from you!** Feel free to open an issue, suggest an improvement, or contribute.
+
+📖 Take a look at the [**Contributing Guide**](CONTRIBUTING.md) to get started.
+
+You can also find me on GitHub: [**277pawan**](https://github.com/277pawan).
+
+> ⭐ **If this repository saved you even a little time, give it a Star — it means a lot! ❤️**
