@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { mergeClasses } from "../../utils/mergeClasses";
+import { mergeClasses, ClassValue } from "../../utils/mergeClasses";
 
 interface Option {
   label: string;
@@ -17,7 +17,7 @@ interface CustomSelectProps {
   multiple?: boolean;
   placeholder?: string;
   disabled?: boolean;
-  className?: string;
+  className?: ClassValue;
   searchable?: boolean;
   maxSelect?: number;
 }

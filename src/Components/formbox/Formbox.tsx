@@ -2,7 +2,8 @@ import React, { SetStateAction, useEffect, useRef, useState } from "react";
 import Inputtag from "../inputTag/Inputtag";
 import Buttontag from "../button/Buttontag";
 import { z } from "zod";
-import { mergeClasses } from "../../utils/mergeClasses";
+import { X } from "lucide-react";
+import { mergeClasses, ClassValue } from "../../utils/mergeClasses";
 
 interface inputField {
   name: string;
@@ -10,7 +11,7 @@ interface inputField {
   label?: string;
   type?: string;
   required?: boolean;
-  className?: string[];
+  className?: ClassValue;
   arialabel?: string;
   maxFiles?: number;
   selectlabel?: string;
@@ -25,12 +26,12 @@ interface inputField {
 
 interface LoaderType {
   loader: boolean;
-  className?: string[];
+  className?: ClassValue;
 }
 interface Button {
   name: string;
   type: "submit" | "reset" | "cancel" | "ok" | "button";
-  className?: string[];
+  className?: ClassValue;
   function?: (data: unknown, e: React.MouseEvent) => void;
   arialabel?: string;
   tooltip?: string;
@@ -40,20 +41,21 @@ interface Button {
 
 interface FormTitle {
   title: string;
-  className?: string[];
+  className?: ClassValue;
 }
 interface Message {
   message: string;
-  className?: string[];
+  className?: ClassValue;
 }
 interface Props {
-  className?: string[];
+  className?: ClassValue;
   textfield?: inputField[]; // Make this prop optional
   buttons?: Button[];
   formtitle?: FormTitle[];
   formtoogle: React.Dispatch<SetStateAction<boolean>>;
   message?: Message[];
   validationSchema?: z.ZodObject<any>;
+  closeFormIcon?: boolean;
 }
 
 function Formbox(props: Props) {
@@ -65,6 +67,7 @@ function Formbox(props: Props) {
     buttons,
     formtitle,
     validationSchema,
+    closeFormIcon,
   } = props;
   const [formData, setFormData] = useState<{ [key: string]: any }>({});
   const [formErrors, setFormErrors] = useState<{ [key: string]: any }>({});
@@ -173,10 +176,7 @@ function Formbox(props: Props) {
 
         if (isEmpty) {
           const labelText = field.label || field.name;
-
-          console.log("label text:-", labelText);
           errors[field.name] = `${labelText} is required`;
-          console.log(errors);
         }
       }
     });
@@ -215,29 +215,40 @@ function Formbox(props: Props) {
       <div className="absolute top-0 left-0 h-full w-full bg-gray-700 bg-opacity-10 backdrop-blur-sm"></div>
       <div
         ref={formref}
-        className={mergeClasses("max-h-[90vh] flex flex-col relative z-10 bg-white p-6 md:p-8 rounded-2xl shadow-xl w-full max-w-xl mx-auto border border-gray-200", className)}
+        className={mergeClasses(
+          "max-h-[90vh] flex flex-col relative z-10 bg-white p-6 md:p-8 rounded-2xl shadow-xl w-full max-w-xl mx-auto border border-gray-200",
+          className,
+        )}
       >
-        <form onSubmit={handleSubmitFn} noValidate className="flex flex-col h-full min-h-0">
+        <form
+          onSubmit={handleSubmitFn}
+          noValidate
+          className="flex flex-col h-full min-h-0"
+        >
           {/* Header */}
           {formtitle && (
             <div className="flex-shrink-0 mb-4">
               {formtitle.map((data, index) => (
                 <div
                   key={index}
-                  className={
-                    data.className
-                      ? data.className.join(" ")
-                      : "text-gray-800 text-3xl font-semibold"
-                  }
+                  className={mergeClasses(
+                    "text-gray-800 text-3xl font-semibold",
+                    data.className,
+                  )}
                 >
                   {data.title}
                 </div>
               ))}
+              {closeFormIcon && (
+                <div className="absolute top-4 right-6">
+                  <X onClick={() => formtoogle(false)} />
+                </div>
+              )}
             </div>
           )}
 
           {/* Scrollable Body */}
-          <div className="flex-1 overflow-y-auto space-y-4 pr-1">
+          <div className="flex-1 overflow-y-auto space-y-4 pr-2">
             {textfield &&
               textfield.length > 0 &&
               textfield.map((field, index) => (
@@ -260,11 +271,10 @@ function Formbox(props: Props) {
               message.map((data, index) => (
                 <dd
                   key={index}
-                  className={
-                    data.className
-                      ? data.className.join(" ")
-                      : "text-sm text-gray-600"
-                  }
+                  className={mergeClasses(
+                    "text-sm text-gray-600",
+                    data.className,
+                  )}
                 >
                   {data.message}
                 </dd>

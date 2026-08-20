@@ -92,10 +92,11 @@ function App() {
             validationSchema={validationSchema}
             formtitle={[
               {
-                title: "Form-Builder",
-                className: ["text-2xl font-bold text-black "],
+                title: "React-Form-Toaster",
+                className: ["text-2xl text-center font-bold text-blue-500 "],
               },
             ]}
+            closeFormIcon={false}
             textfield={[
               {
                 name: "firstname",

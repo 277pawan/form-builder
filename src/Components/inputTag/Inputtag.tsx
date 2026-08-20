@@ -1,6 +1,6 @@
 import React, { useRef, useState } from "react";
 import CustomSelect from "../customSelect/customSelect.tsx";
-import { mergeClasses } from "../../utils/mergeClasses";
+import { mergeClasses, ClassValue } from "../../utils/mergeClasses";
 
 interface inputField {
   name: string;
@@ -12,7 +12,7 @@ interface inputField {
   maxFiles?: number;
   selectlabel?: string;
   accept?: string;
-  className?: string[];
+  className?: ClassValue;
   options?: { label: string; value: string }[];
   checklimit?: number;
   passwordToggle?: boolean;
@@ -32,7 +32,7 @@ interface Props {
   textfield: inputField;
   value: any;
   onChange: (name: string, value: any) => void;
-  className?: string[];
+  className?: ClassValue;
   formErrors?: FormErrors;
 }
 
@@ -178,13 +178,14 @@ function Inputtag(props: Props) {
           {/* Drop-zone style upload button */}
           <label
             htmlFor={name}
-            className={`flex flex-col items-center justify-center w-full min-h-[80px] border-2 border-dashed rounded-lg cursor-pointer transition-colors my-1
-    ${className ? className.join(" ") : ""}
-    ${
-      Array.isArray(value) && value.length >= maxFiles
-        ? "border-gray-300 bg-gray-100 opacity-50 cursor-not-allowed"
-        : "border-blue-400 bg-blue-50 hover:bg-blue-100"
-    }`}
+            className={mergeClasses(
+              `flex flex-col items-center justify-center w-full min-h-[80px] border-2 border-dashed rounded-lg cursor-pointer transition-colors my-1 ${
+                Array.isArray(value) && value.length >= maxFiles
+                  ? "border-gray-300 bg-gray-100 opacity-50 cursor-not-allowed"
+                  : "border-blue-400 bg-blue-50 hover:bg-blue-100"
+              }`,
+              className
+            )}
           >
             <span className="text-sm text-blue-600 font-medium mt-1">
               {Array.isArray(value) && value.length >= maxFiles

@@ -1,17 +1,17 @@
 import React from "react";
 import "./ButtonTag.css";
-import { mergeClasses } from "../../utils/mergeClasses";
+import { mergeClasses, ClassValue } from "../../utils/mergeClasses";
 
 interface LoaderType {
   loader: boolean;
-  className?: string[];
+  className?: ClassValue;
 }
 // Button Component props
 interface Props {
   value: any;
   setformdata: React.Dispatch<React.SetStateAction<{ [key: string]: any }>>;
   initialFormData: { [key: string]: any };
-  className: string[] | undefined;
+  className?: ClassValue;
   action?: (data: any, e: React.MouseEvent) => void;
   arialabel?: string;
   tooltip?: string;
@@ -105,11 +105,10 @@ function Buttontag(props: Props) {
                   {value.name}
                 </span>
                 <span
-                  className={`absolute left-[42%] h-5 w-5 rounded-full animate-spin ${
+                  className={mergeClasses(
+                    "absolute left-[42%] h-5 w-5 rounded-full animate-spin border-2 border-white border-t-transparent",
                     loader?.className
-                      ? loader.className.join(" ")
-                      : "border-2 border-white border-t-transparent"
-                  }`}
+                  )}
                 ></span>
               </>
             ) : (
