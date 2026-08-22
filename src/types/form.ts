@@ -83,14 +83,34 @@ export interface FormButton {
   ariaLabel?: string;
   tooltip?: string;
   disabled?: boolean;
-  onClick?: (data: unknown, e: React.MouseEvent) => void;
+  onClick?: (data: unknown, e: React.MouseEvent) => void | Promise<void>;
   loader?: { loading?: boolean; className?: ClassValue };
+  /** Show built-in toast when this button's onClick is triggered */
+  toast?: ToastMessages;
 }
+
+export type ToastPosition =
+  | "top-left"
+  | "top-center"
+  | "top-right"
+  | "bottom-left"
+  | "bottom-center"
+  | "bottom-right";
 
 export interface ToastMessages {
   loading?: string;
   success?: string;
   error?: string;
+  /** Toast position on screen (default: "bottom-right") */
+  position?: ToastPosition;
+  /** Auto-dismiss duration in milliseconds (default: 3500) */
+  duration?: number;
+  /** Whether to show a close (X) button on toast (default: true) */
+  dismissible?: boolean;
+  /** Custom CSS classes applied to the toast container for each state */
+  loadingClassName?: ClassValue;
+  successClassName?: ClassValue;
+  errorClassName?: ClassValue;
 }
 
 export type FormData = Record<string, unknown>;
@@ -128,7 +148,9 @@ export interface NormalizedField extends FormField {
   searchable: boolean;
   passwordToggle: boolean;
   dependsOn?: string;
-  loadOptions?: (parentValue: unknown) => Promise<FieldOption[]> | FieldOption[];
+  loadOptions?: (
+    parentValue: unknown,
+  ) => Promise<FieldOption[]> | FieldOption[];
   /** Resolved options (static or loaded from dependsOn) */
   resolvedOptions: FieldOption[];
 }

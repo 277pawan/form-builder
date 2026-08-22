@@ -1,6 +1,7 @@
 import React from "react";
 import "./ButtonTag.css";
 import { mergeClasses, ClassValue } from "../../utils/mergeClasses";
+import type { ToastMessages } from "../../types/form";
 
 interface LoaderType {
   loader: boolean;
@@ -12,11 +13,15 @@ interface Props {
   setformdata: React.Dispatch<React.SetStateAction<{ [key: string]: any }>>;
   initialFormData: { [key: string]: any };
   className?: ClassValue;
-  action?: (data: any, e: React.MouseEvent) => void;
+  action?: (data: any, e: React.MouseEvent) => void | Promise<void>;
   arialabel?: string;
   tooltip?: string;
   disabled?: boolean;
   loader?: LoaderType;
+  /** Built-in toast config for this button */
+  toast?: ToastMessages;
+  /** runWithToast injected from FormToast context via Formbox */
+  runWithToast?: <T>(promise: Promise<T>, messages: ToastMessages) => Promise<T>;
 }
 
 function Buttontag(props: Props) {
@@ -30,9 +35,23 @@ function Buttontag(props: Props) {
     className,
     loader,
     disabled,
+    toast: toastMessages,
+    runWithToast,
   } = props;
 
-  // Handle reset funcction
+  /** Wraps action with runWithToast if a toast config is provided */
+  const handleAction = (data: unknown, e: React.MouseEvent) => {
+    if (!action) return;
+    if (toastMessages && runWithToast) {
+      const result = action(data, e);
+      const promise = result instanceof Promise ? result : Promise.resolve();
+      runWithToast(promise, toastMessages);
+    } else {
+      action(data, e);
+    }
+  };
+
+  // Handle reset function
   const handleResetFn = (e: React.MouseEvent) => {
     e.preventDefault();
     setformdata(initialFormData);
@@ -63,7 +82,7 @@ function Buttontag(props: Props) {
               className
             )}
             type={value.type}
-            onClick={(e) => action && action(null, e)}
+            onClick={(e) => handleAction(null, e)}
             aria-label={arialabel}
           >
             {value.name}
@@ -125,7 +144,7 @@ function Buttontag(props: Props) {
               `${baseBtnStyle} bg-[#0878ce] text-white hover:bg-[#2a6898]`,
               className
             )}
-            onClick={(e) => action && action(true, e)}
+            onClick={(e) => handleAction(true, e)}
             aria-label={arialabel}
           >
             Yes
@@ -140,7 +159,7 @@ function Buttontag(props: Props) {
               `${baseBtnStyle} bg-gray-200 text-[#3089cd] hover:bg-gray-300`,
               className
             )}
-            onClick={(e) => action && action(false, e)}
+            onClick={(e) => handleAction(false, e)}
             aria-label={arialabel}
           >
             Cancel

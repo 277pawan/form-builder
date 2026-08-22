@@ -154,7 +154,8 @@ function Inputtag(props: Props) {
     const selected = e.target.files ? Array.from(e.target.files) : [];
     const existing: File[] = Array.isArray(value) ? value : [];
 
-    if (existing.length + selected.length > maxFiles) {
+    // maxFiles === 0 means unlimited — only enforce cap when > 0
+    if (maxFiles > 0 && existing.length + selected.length > maxFiles) {
       setFileError(
         `You can upload a maximum of ${maxFiles} file${maxFiles > 1 ? "s" : ""}`,
       );
@@ -205,7 +206,7 @@ function Inputtag(props: Props) {
             htmlFor={name}
             className={mergeClasses(
               `flex flex-col items-center justify-center w-full min-h-[80px] border-2 border-dashed rounded-lg cursor-pointer transition-colors my-1 ${
-                Array.isArray(value) && value.length >= maxFiles
+                maxFiles > 0 && Array.isArray(value) && value.length >= maxFiles
                   ? "border-gray-300 bg-gray-100 opacity-50 cursor-not-allowed"
                   : "border-blue-400 bg-blue-50 hover:bg-blue-100"
               }`,
@@ -213,13 +214,15 @@ function Inputtag(props: Props) {
             )}
           >
             <span className="text-sm text-blue-600 font-medium mt-1">
-              {Array.isArray(value) && value.length >= maxFiles
+              {maxFiles > 0 && Array.isArray(value) && value.length >= maxFiles
                 ? `Maximum ${maxFiles} file${maxFiles > 1 ? "s" : ""} reached`
                 : `${textfield.selectlabel || "Click to upload"}${maxFiles > 1 ? ` (up to ${maxFiles} files)` : ""}`}
             </span>
             <span className="text-xs text-gray-400 mt-0.5">
               {Array.isArray(value) && value.length > 0
-                ? `${value.length} / ${maxFiles} selected`
+                ? maxFiles > 0
+                  ? `${value.length} / ${maxFiles} selected`
+                  : `${value.length} selected`
                 : "No file chosen"}
             </span>
           </label>
@@ -230,12 +233,12 @@ function Inputtag(props: Props) {
             type="file"
             id={name}
             name={name}
-            multiple={maxFiles > 1}
+            multiple={maxFiles === 0 || maxFiles > 1}
             onChange={handleFileChange}
             required={required && !(Array.isArray(value) && value.length > 0)}
             aria-label={arialabel}
             accept={textfield.accept || "*/*"}
-            disabled={Array.isArray(value) && value.length >= maxFiles}
+            disabled={maxFiles > 0 && Array.isArray(value) && value.length >= maxFiles}
           />
 
           {/* File error */}

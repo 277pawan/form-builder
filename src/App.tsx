@@ -1,6 +1,4 @@
 import { useState } from "react";
-import reactLogo from "./assets/react.svg";
-import viteLogo from "/vite.svg";
 import "./App.css";
 import Formbox from "./Components/formbox/Formbox";
 import { z } from "zod";
@@ -19,14 +17,20 @@ const userSchema = z.object({
     .refine((val) => val >= 18, {
       message: "You must be at least 18 years old",
     }),
-  file: z.any().refine(
-    (file) => {
-      if (file instanceof File) return file.size > 0;
-      if (Array.isArray(file)) return file.length > 0;
-      return false;
-    },
-    { message: "File is required" },
-  ),
+  file: z
+    .any()
+    .optional()
+    .refine(
+      (file) => {
+        // undefined/null/empty-array = no file chosen = valid when not required
+        if (file === undefined || file === null) return true;
+        if (Array.isArray(file) && file.length === 0) return true;
+        if (file instanceof File) return file.size > 0;
+        if (Array.isArray(file)) return file.length > 0;
+        return true;
+      },
+      { message: "Invalid file" },
+    ),
 });
 
 function App() {
@@ -42,14 +46,6 @@ function App() {
 
   return (
     <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
       <h1>Vite + React</h1>
       <div className="card">
         <button onClick={() => setCount((c) => c + 1)}>count is {count}</button>
@@ -86,6 +82,7 @@ function App() {
             loading: "Submitting form...",
             success: "Form submitted!",
             error: "Submission failed.",
+            position: "top-right",
           }}
           onSubmit={async (data) => {
             await new Promise((r) => setTimeout(r, 1500));
@@ -211,6 +208,12 @@ function App() {
             text: "Confirmation Form",
             className: ["text-2xl font-semibold"],
           }}
+          toast={{
+            loading: "Submitting form...",
+            success: "Form submitted!",
+            error: "Submission failed.",
+            position: "top-right",
+          }}
           message={[
             {
               text: "This is a very important file. Are you sure you want to delete it? Please reconfirm.",
@@ -228,7 +231,15 @@ function App() {
             {
               name: "Ok",
               type: "ok",
-              onClick: () => handleConfirm(true, "secret_id"),
+              onClick: async () => {
+                await new Promise((r) => setTimeout(r, 800));
+                handleConfirm(true, "file_123");
+              },
+              toast: {
+                loading: "Deleting...",
+                success: "File deleted!",
+                error: "Failed to delete",
+              },
               tooltip: "Confirmation",
               className: ["bg-red-600"],
             },

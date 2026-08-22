@@ -26,7 +26,8 @@ yarn add react-form-toaster
 - 📱 **Responsive** — Works great on all screen sizes.
 - 🔁 **Array Fields** — Repeatable nested field groups with fully customizable add/remove buttons.
 - 👁️ **Conditional Fields** — Show or hide fields based on other field values using `showWhen`.
-- 🍞 **Toast Notifications** — Built-in loading/success/error toasts for async submit handlers.
+- 🍞 **Toast Notifications** — Built-in loading/success/error toasts for async submit handlers and individual buttons.
+- 🎨 **Toast CSS Overrides** — Fully customize toast appearance per state (loading, success, error) with your own classes.
 
 ---
 
@@ -225,6 +226,8 @@ import "react-form-toaster/dist/index.css";
 
 ## Confirmation Forms
 
+Use `type: "ok"` or `type: "cancel"` for confirmation dialogs. Add a `toast` prop directly on any button to show built-in toast feedback when it is clicked:
+
 ```tsx
 <Formbox
   open={open}
@@ -243,11 +246,21 @@ import "react-form-toaster/dist/index.css";
       name: "Delete",
       type: "ok",
       className: ["bg-red-600 text-white hover:bg-red-700"],
-      onClick: () => handleConfirm(true),
+      onClick: async () => {
+        await deleteFile();      // can be sync or async
+      },
+      // ✅ Built-in toast on button click — no onSubmit needed
+      toast: {
+        loading: "Deleting...",
+        success: "File deleted!",
+        error: "Failed to delete",
+      },
     },
   ]}
 />
 ```
+
+Works on **all** button types: `ok`, `cancel`, `button`.
 
 ---
 
@@ -305,7 +318,7 @@ For the complete configuration reference with all props, operators, and examples
 | `passwordToggle`        | `boolean`             | Enables show/hide toggle inside `password` fields.                          |
 | `icon`                  | `{ show, hide }`      | Custom React components for the password toggle icons.                      |
 | `accept`                | `string`              | Accepted file types for `file` fields. E.g. `".pdf,image/*"`.               |
-| `maxFiles`              | `number`              | Maximum number of files for `file` fields. Default: `1`.                    |
+| `maxFiles`              | `number`              | Maximum number of files for `file` fields. Default: `1`. Set to `0` for unlimited. |
 | `selectLabel`           | `string`              | Label text shown on the file picker button.                                 |
 | `showWhen`              | `ShowWhen`            | Conditionally renders this field based on another field's value.            |
 | `fields`                | `FormField[]`         | Nested field definitions for `array` type.                                  |
@@ -317,16 +330,82 @@ For the complete configuration reference with all props, operators, and examples
 
 ### FormButton Attributes
 
-| Attribute   | Type                                                            | Description                                                           |
-| ----------- | --------------------------------------------------------------- | --------------------------------------------------------------------- |
-| `name`      | `string`                                                        | Button label text.                                                    |
-| `type`      | `"submit" \| "reset" \| "cancel" \| "ok" \| "button"`          | Controls button behavior.                                             |
-| `className` | `string[]`                                                      | Custom Tailwind classes.                                              |
-| `ariaLabel` | `string`                                                        | `aria-label` for accessibility.                                       |
-| `tooltip`   | `string`                                                        | Tooltip shown on hover.                                               |
-| `disabled`  | `boolean`                                                       | Disables the button.                                                  |
-| `onClick`   | `(data: unknown, e: MouseEvent) => void`                        | Click handler — receives current form data.                           |
-| `loader`    | `{ loading?: boolean; className?: string[] }`                   | Spinner config. `className` customizes the spinner border color.      |
+| Attribute   | Type                                                            | Description                                                                          |
+| ----------- | --------------------------------------------------------------- | ------------------------------------------------------------------------------------ |
+| `name`      | `string`                                                        | Button label text.                                                                   |
+| `type`      | `"submit" \| "reset" \| "cancel" \| "ok" \| "button"`          | Controls button behavior.                                                            |
+| `className` | `string[]`                                                      | Custom Tailwind classes.                                                             |
+| `ariaLabel` | `string`                                                        | `aria-label` for accessibility.                                                      |
+| `tooltip`   | `string`                                                        | Tooltip shown on hover.                                                              |
+| `disabled`  | `boolean`                                                       | Disables the button.                                                                 |
+| `onClick`   | `(data: unknown, e: MouseEvent) => void \| Promise<void>`       | Click handler — receives current form data. Supports async.                          |
+| `loader`    | `{ loading?: boolean; className?: string[] }`                   | Spinner config. `className` customizes the spinner border color.                     |
+| `toast`     | `ToastMessages`                                                 | Shows built-in toast when this button is clicked. Works with async `onClick`.        |
+
+---
+
+## Toast Customization
+
+The `toast` prop is available on both the **form level** (for `onSubmit`) and on **individual buttons** (for `onClick`). Both support per-state CSS class overrides.
+
+### Toast on Form Submit
+
+```tsx
+<Formbox
+  onSubmit={async (data) => await api.save(data)}
+  toast={{
+    loading: "Saving...",
+    success: "Saved!",
+    error: "Save failed",
+    position: "top-right",   // "top-left" | "top-center" | "top-right" | "bottom-left" | "bottom-center" | "bottom-right"
+    duration: 4000,          // Auto-dismiss after 4000ms (default: 3500ms)
+    dismissible: true,       // Shows close (X) button (default: true)
+    // 🎨 Custom classes per state (merged on top of defaults)
+    loadingClassName: ["bg-blue-700 text-white"],
+    successClassName: ["bg-emerald-500 text-white font-bold"],
+    errorClassName:   ["bg-rose-600 text-white"],
+  }}
+  ...
+/>
+```
+
+### Toast on Button Click
+
+```tsx
+buttons={[
+  {
+    name: "Confirm",
+    type: "ok",
+    onClick: async () => await doSomething(),
+    toast: {
+      loading: "Processing...",
+      success: "Done!",
+      error: "Failed",
+      position: "top-right",
+      duration: 3000,
+      // 🎨 Custom classes per state
+      successClassName: ["bg-green-500 rounded-full px-6"],
+      errorClassName:   ["bg-red-700 text-lg"],
+    },
+  },
+]}
+```
+
+### `ToastMessages` Reference
+
+| Key                  | Type            | Default          | Description                                                                              |
+| -------------------- | --------------- | ---------------- | ---------------------------------------------------------------------------------------- |
+| `loading`            | `string`        | `undefined`      | Message shown while the async action is in progress.                                     |
+| `success`            | `string`        | `undefined`      | Message shown after the action succeeds.                                                 |
+| `error`              | `string`        | `undefined`      | Message shown if the action throws.                                                      |
+| `position`           | `ToastPosition` | `"bottom-right"` | Position on screen: `"top-left" \| "top-center" \| "top-right" \| "bottom-left" \| "bottom-center" \| "bottom-right"`. |
+| `duration`           | `number`        | `3500`           | Auto-dismiss timer in milliseconds.                                                      |
+| `dismissible`        | `boolean`       | `true`           | Shows a close (X) icon button on the toast for manual dismissal.                         |
+| `loadingClassName`   | `string[]`      | `undefined`      | Extra classes applied to the toast in **loading** state.                                 |
+| `successClassName`   | `string[]`      | `undefined`      | Extra classes applied to the toast in **success** state.                                 |
+| `errorClassName`     | `string[]`      | `undefined`      | Extra classes applied to the toast in **error** state.                                   |
+
+> **Tip:** Multiple toasts automatically **stack vertically** with entrance animations (slide + fade + scale) and can be dismissed individually using the **(X)** icon button.
 
 ---
 

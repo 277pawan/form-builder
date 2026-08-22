@@ -27,7 +27,7 @@ function normalizeField(field: LegacyField): NormalizedField {
     selectLabel: field.selectLabel ?? field.selectlabel,
     maxSelections: field.maxSelections ?? field.checklimit ?? 1,
     maxSelect: field.maxSelect ?? 2,
-    maxFiles: field.maxFiles ?? 1,
+    maxFiles: field.maxFiles !== undefined ? field.maxFiles : 1,
     searchable: field.searchable ?? false,
     passwordToggle: field.passwordToggle ?? false,
     resolvedOptions: field.options ?? [],

@@ -3,7 +3,10 @@ import { createPortal } from "react-dom";
 import Inputtag from "../inputTag/Inputtag";
 import Buttontag from "../button/Buttontag";
 import { mergeClasses, ClassValue } from "../../utils/mergeClasses";
-import { normalizeFormboxProps, fieldToLegacyShape } from "../../utils/normalizeProps";
+import {
+  normalizeFormboxProps,
+  fieldToLegacyShape,
+} from "../../utils/normalizeProps";
 import { useFormEngine } from "../../engine/useFormEngine";
 import { FormToastProvider, useFormToast } from "../Toast/FormToast";
 import type { FormboxProps } from "../../types/form";
@@ -127,8 +130,18 @@ function FormboxInner(props: FormboxProps) {
                   className="absolute top-4 right-6 text-gray-500 hover:text-gray-700 bg-transparent border-none cursor-pointer p-1 transition-colors"
                   aria-label="Close form"
                 >
-                  <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  <svg
+                    className="w-5 h-5"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M6 18L18 6M6 6l12 12"
+                    />
                   </svg>
                 </button>
               )}
@@ -137,15 +150,22 @@ function FormboxInner(props: FormboxProps) {
 
           <div className="flex-1 overflow-y-auto space-y-4 pr-2">
             {engine.visibleFields.map((field) => (
-              <div key={field.name} className="flex flex-col justify-start items-start w-full">
+              <div
+                key={field.name}
+                className="flex flex-col justify-start items-start w-full"
+              >
                 <Inputtag
                   textfield={fieldToLegacyShape(field)}
                   value={engine.formData[field.name]}
                   onChange={engine.setFieldValue}
                   className={field.className}
                   formErrors={engine.formErrors}
-                  onAddArrayItem={() => engine.addArrayItem(field.name, field.fields)}
-                  onRemoveArrayItem={(index) => engine.removeArrayItem(field.name, index)}
+                  onAddArrayItem={() =>
+                    engine.addArrayItem(field.name, field.fields)
+                  }
+                  onRemoveArrayItem={(index) =>
+                    engine.removeArrayItem(field.name, index)
+                  }
                   onUpdateArrayItem={(index, subName, val) =>
                     engine.updateArrayItem(field.name, index, subName, val)
                   }
@@ -172,25 +192,41 @@ function FormboxInner(props: FormboxProps) {
                     ...btn,
                     function: btn.onClick,
                     loader: btn.loader
-                      ? { loader: btn.type === "submit" ? isSubmitting : btn.loader.loading, className: btn.loader.className }
+                      ? {
+                          loader:
+                            btn.type === "submit"
+                              ? isSubmitting
+                              : btn.loader.loading,
+                          className: btn.loader.className,
+                        }
                       : btn.type === "submit" && isSubmitting
                         ? { loader: true }
                         : undefined,
                   }}
-                  setformdata={(_value) => {
+                  setformdata={() => {
                     engine.resetForm();
                   }}
                   initialFormData={engine.formData}
                   className={btn.className}
                   action={btn.onClick}
+                  toast={btn.toast}
+                  runWithToast={runWithToast}
                   tooltip={btn.tooltip}
                   arialabel={btn.ariaLabel}
-                  disabled={btn.disabled || (btn.type === "submit" && isSubmitting)}
+                  disabled={
+                    btn.disabled || (btn.type === "submit" && isSubmitting)
+                  }
                   loader={
                     btn.type === "submit"
-                      ? { loader: isSubmitting, className: btn.loader?.className }
+                      ? {
+                          loader: isSubmitting,
+                          className: btn.loader?.className,
+                        }
                       : btn.loader
-                        ? { loader: btn.loader.loading ?? false, className: btn.loader.className }
+                        ? {
+                            loader: btn.loader.loading ?? false,
+                            className: btn.loader.className,
+                          }
                         : undefined
                   }
                 />
@@ -207,7 +243,11 @@ function FormboxInner(props: FormboxProps) {
 
 function Formbox(props: FormboxProps) {
   return (
-    <FormToastProvider>
+    <FormToastProvider
+      position={props.toast?.position}
+      duration={props.toast?.duration}
+      dismissible={props.toast?.dismissible}
+    >
       <FormboxInner {...props} />
     </FormToastProvider>
   );
