@@ -147,7 +147,7 @@ function Buttontag(props: Props) {
             onClick={(e) => handleAction(true, e)}
             aria-label={arialabel}
           >
-            Yes
+            {value.name || "Yes"}
           </button>
         </ButtonWrapper>
       )}
@@ -162,7 +162,7 @@ function Buttontag(props: Props) {
             onClick={(e) => handleAction(false, e)}
             aria-label={arialabel}
           >
-            Cancel
+            {value.name || "Cancel"}
           </button>
         </ButtonWrapper>
       )}
