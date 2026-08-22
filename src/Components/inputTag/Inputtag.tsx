@@ -1,5 +1,5 @@
 import React, { useRef, useState } from "react";
-import CustomSelect from "../customSelect/customSelect.tsx";
+import CustomSelect from "../customSelect/customSelect";
 import { mergeClasses, ClassValue } from "../../utils/mergeClasses";
 
 interface inputField {
@@ -22,6 +22,16 @@ interface inputField {
     show?: React.ComponentType;
     hide?: React.ComponentType;
   };
+  addButtonText?: string;
+  addBtnText?: string;
+  removeButtonText?: string;
+  removeBtnText?: string;
+  addButtonClassName?: ClassValue;
+  addBtnClassName?: ClassValue;
+  removeButtonClassName?: ClassValue;
+  removeBtnClassName?: ClassValue;
+  itemClassName?: ClassValue;
+  fields?: inputField[];
 }
 
 interface FormErrors {
@@ -29,15 +39,27 @@ interface FormErrors {
 }
 
 interface Props {
-  textfield: inputField;
+  textfield: inputField & { resolvedOptions?: { label: string; value: string }[] };
   value: any;
   onChange: (name: string, value: any) => void;
   className?: ClassValue;
   formErrors?: FormErrors;
+  onAddArrayItem?: () => void;
+  onRemoveArrayItem?: (index: number) => void;
+  onUpdateArrayItem?: (index: number, subName: string, value: unknown) => void;
 }
 
 function Inputtag(props: Props) {
-  const { textfield, value, onChange, className, formErrors } = props;
+  const {
+    textfield,
+    value,
+    onChange,
+    className,
+    formErrors,
+    onAddArrayItem,
+    onRemoveArrayItem,
+    onUpdateArrayItem,
+  } = props;
   const {
     name,
     label,
@@ -52,7 +74,10 @@ function Inputtag(props: Props) {
     icon,
     searchable = false,
     maxSelect = 2,
+    fields: nestedFields = [],
   } = textfield;
+
+  const selectOptions = textfield.resolvedOptions ?? options;
 
   const [fileError, setFileError] = useState<string>("");
   const [showPassword, setShowPassword] = useState<boolean>(false);
@@ -104,23 +129,23 @@ function Inputtag(props: Props) {
 
   // ✅ Dedicated handler for normal inputs
   const handleTextChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { value, checked, type } = e.target;
+    const { value: targetVal, checked, type: targetType } = e.target;
 
-    if (type === "checkbox") {
-      onChange(name, (prev: string[] = []) => {
-        const safePrev = Array.isArray(prev) ? prev : [];
-        if (checked) {
-          // limit check
-          if (safePrev.length >= checklimit) {
-            return safePrev; //  ignore extra selection
-          }
-          return [...safePrev, value]; //  add
-        } else {
-          return safePrev.filter((item) => item !== value); // remove
+    if (targetType === "checkbox") {
+      const currentVal = Array.isArray(value) ? value : [];
+      if (checked) {
+        if (currentVal.length >= checklimit) {
+          return;
         }
-      });
+        onChange(name, [...currentVal, targetVal]);
+      } else {
+        onChange(
+          name,
+          currentVal.filter((item) => item !== targetVal)
+        );
+      }
     } else {
-      onChange(name, value);
+      onChange(name, targetVal);
     }
   };
 
@@ -261,7 +286,7 @@ function Inputtag(props: Props) {
       )}
 
       {(type === "checkbox" || type === "radio") &&
-        options?.map((option, index) => (
+        selectOptions?.map((option, index) => (
           <label
             key={option.value || index}
             className="flex items-center gap-2"
@@ -295,6 +320,7 @@ function Inputtag(props: Props) {
         type !== "radio" &&
         type !== "select" &&
         type !== "multiselect" &&
+        type !== "array" &&
         (type === "password" && passwordToggle ? (
           <div className="relative w-full">
             <input
@@ -336,16 +362,75 @@ focus:outline-none focus:ring-0"
       {(type === "select" || type === "multiselect") && (
         <CustomSelect
           name={name}
-          options={options}
+          options={selectOptions}
           value={value}
           onChange={onChange}
           multiple={type === "multiselect"}
           placeholder={textfield.placeholder}
           searchable={searchable}
-          //          showInvert={true}
           maxSelect={maxSelect}
           className={baseInputClass}
         />
+      )}
+
+      {type === "array" && (
+        <div className={mergeClasses("w-full space-y-3", textfield.className || className)}>
+          {(Array.isArray(value) ? value : []).map((row: Record<string, unknown>, rowIndex: number) => (
+            <div
+              key={rowIndex}
+              className={mergeClasses(
+                "border border-gray-200 rounded-lg p-3 space-y-2 bg-gray-50",
+                textfield.itemClassName
+              )}
+            >
+              {nestedFields.map((sub: inputField) => (
+                <div key={sub.name}>
+                  {sub.label && (
+                    <label className="text-black text-xs font-semibold mb-1 block">
+                      {sub.label}
+                    </label>
+                  )}
+                  <input
+                    className={mergeClasses(
+                      "p-2 w-full border-2 my-1 rounded-md text-black transition-colors border-gray-300 bg-white focus:outline-none focus:border-blue-500 focus:bg-white",
+                      sub.className
+                    )}
+                    type={sub.type === "number" ? "number" : "text"}
+                    value={(row[sub.name] as string) ?? ""}
+                    placeholder={sub.placeholder}
+                    onChange={(e) =>
+                      onUpdateArrayItem?.(
+                        rowIndex,
+                        sub.name,
+                        sub.type === "number" ? Number(e.target.value) : e.target.value,
+                      )
+                    }
+                  />
+                </div>
+              ))}
+              <button
+                type="button"
+                onClick={() => onRemoveArrayItem?.(rowIndex)}
+                className={mergeClasses(
+                  "text-xs text-red-600 hover:text-red-700 font-medium cursor-pointer transition-colors",
+                  textfield.removeButtonClassName || textfield.removeBtnClassName
+                )}
+              >
+                {textfield.removeButtonText || textfield.removeBtnText || "Remove"}
+              </button>
+            </div>
+          ))}
+          <button
+            type="button"
+            onClick={() => onAddArrayItem?.()}
+            className={mergeClasses(
+              "text-sm text-blue-600 hover:text-blue-700 font-medium cursor-pointer transition-colors block",
+              textfield.addButtonClassName || textfield.addBtnClassName
+            )}
+          >
+            {textfield.addButtonText || textfield.addBtnText || `+ Add ${label || name}`}
+          </button>
+        </div>
       )}
 
       {/* Validation errors */}

@@ -77,33 +77,29 @@ export function CustomSelect({
 
   const toggle = (val: string) => {
     if (multiple) {
-      const arr = selected as string[];
+      const arr = Array.isArray(selected) ? selected : [];
 
-      // ❌ block new selection if limit reached
-      if (!arr.includes(val) && isMaxReached) return;
-      onChange(name, (prev: string[] = []) => {
-        const safePrev = Array.isArray(prev) ? prev : [];
-
-        if (safePrev.includes(val)) {
-          return safePrev.filter((v) => v !== val);
-        } else {
-          if (maxSelect && safePrev.length >= maxSelect) {
-            return safePrev; // block
-          }
-          return [...safePrev, val];
-        }
-      });
+      if (arr.includes(val)) {
+        onChange(
+          name,
+          arr.filter((v) => v !== val),
+        );
+      } else {
+        if (maxSelect && arr.length >= maxSelect) return;
+        onChange(name, [...arr, val]);
+      }
     } else {
-      onChange(name, () => val);
+      onChange(name, val);
       setOpen(false);
     }
   };
 
   const removeTag = (val: string, e: React.MouseEvent) => {
     e.stopPropagation();
+    const arr = Array.isArray(selected) ? selected : [];
     onChange(
       name,
-      (selected as string[]).filter((v) => v !== val),
+      arr.filter((v) => v !== val),
     );
   };
 

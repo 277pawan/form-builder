@@ -101,7 +101,7 @@ function Buttontag(props: Props) {
           >
             {loader?.loader ? (
               <>
-                <span className="text-md tracking-wide invisible">
+                <span className="text-sm tracking-wide invisible">
                   {value.name}
                 </span>
                 <span

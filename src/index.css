@@ -39,15 +39,20 @@ a:hover {
 
 body {
   margin: 0;
-  display: flex;
-  place-items: center;
   min-width: 320px;
   min-height: 100vh;
+  color: #213547;
+  background-color: #ffffff;
+}
+
+#root {
+  width: 100%;
 }
 
 h1 {
   font-size: 3.2em;
   line-height: 1.1;
+  color: inherit;
 }
 
 button {
@@ -55,7 +60,7 @@ button {
   border: 1px solid transparent;
   padding: 0.6em 1.2em;
   font-size: 1em;
-  color: white;
+  color: #ffffff;
   font-weight: 500;
   font-family: inherit;
   background-color: #1a1a1a;
@@ -71,14 +76,16 @@ button:focus-visible {
 }
 
 @media (prefers-color-scheme: light) {
-  :root {
-    color: #ffffff;
+  body {
+    color: #213547;
     background-color: #ffffff;
   }
   a:hover {
     color: #747bff;
   }
   button {
+    color: #213547;
     background-color: #f9f9f9;
+    border: 1px solid #e5e7eb;
   }
 }
