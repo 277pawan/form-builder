@@ -47,35 +47,63 @@ const TEXT_SIZE_TOKENS = new Set([
   "9xl",
 ]);
 
-const stripVariantPrefix = (cls: string): string =>
-  cls.replace(/^(sm|md|lg|xl|2xl|hover|focus|active|disabled|group-hover):/, "");
+const VARIANT_REGEX = /^(sm|md|lg|xl|2xl|hover|focus|active|disabled|group-hover|placeholder):/;
+
+const getVariantAndPure = (cls: string): { variant: string; pure: string } => {
+  const match = cls.match(VARIANT_REGEX);
+  if (match) {
+    return {
+      variant: match[1],
+      pure: cls.slice(match[0].length),
+    };
+  }
+  return { variant: "", pure: cls };
+};
 
 /**
- * Maps a Tailwind class to a utility category so custom classes can replace defaults.
+ * Maps a Tailwind class to a utility category key, including variant namespace.
  */
-const getCategory = (cls: string): string | null => {
-  const pure = stripVariantPrefix(cls);
+const getCategoryKey = (cls: string): string | null => {
+  const { variant, pure } = getVariantAndPure(cls);
 
-  if (/^bg-/.test(pure)) return "bg";
-  if (/^rounded(-|$)/.test(pure)) return "rounded";
-  if (/^border(-|$)/.test(pure)) return "border";
-  if (/^shadow(-|$)/.test(pure)) return "shadow";
-  if (/^(p[trblxy]?|px|py)-/.test(pure) || /^p-\d+/.test(pure)) return "padding";
-  if (/^(m[trblxy]?|mx|my)-/.test(pure) || /^m-\d+/.test(pure)) return "margin";
-  if (/^font-(thin|extralight|light|normal|medium|semibold|bold|extrabold|black)/.test(pure))
-    return "font-weight";
-  if (/^text-(left|center|right|justify|start|end)$/.test(pure)) return "text-align";
+  let category: string | null = null;
 
-  const bracketSize = pure.match(/^text-\[(.+)\]$/);
-  if (bracketSize) return "text-size";
+  if (/^bg-/.test(pure)) category = "bg";
+  else if (/^rounded(-|$)/.test(pure)) category = "rounded";
+  else if (/^border(-|$)/.test(pure)) category = "border";
+  else if (/^ring-offset(-|$)/.test(pure)) category = "ring-offset";
+  else if (/^ring-/.test(pure)) {
+    category = /^ring-(black|white|transparent|current|[\w-]+#?)/.test(pure) ? "ring-color" : "ring";
+  }
+  else if (/^shadow(-|$)/.test(pure)) category = "shadow";
+  else if (/^(p[trblxy]?|px|py)-/.test(pure) || /^p-\d+/.test(pure)) category = "padding";
+  else if (/^(m[trblxy]?|mx|my)-/.test(pure) || /^m-\d+/.test(pure)) category = "margin";
+  else if (/^font-(thin|extralight|light|normal|medium|semibold|bold|extrabold|black)/.test(pure))
+    category = "font-weight";
+  else if (/^text-(left|center|right|justify|start|end)$/.test(pure)) category = "text-align";
+  else if (/^space-y-/.test(pure)) category = "space-y";
+  else if (/^space-x-/.test(pure)) category = "space-x";
+  else {
+    const bracketVal = pure.match(/^text-\[(.+)\]$/);
+    if (bracketVal) {
+      const inner = bracketVal[1];
+      if (/#|rgb|hsl/.test(inner)) {
+        category = "text-color";
+      } else {
+        category = "text-size";
+      }
+    } else {
+      const namedSize = pure.match(/^text-([\w]+)$/);
+      if (namedSize && TEXT_SIZE_TOKENS.has(namedSize[1])) {
+        category = "text-size";
+      } else if (/^text-(black|white|transparent|current|[\w-]+)/.test(pure)) {
+        category = "text-color";
+      }
+    }
+  }
 
-  const namedSize = pure.match(/^text-([\w]+)$/);
-  if (namedSize && TEXT_SIZE_TOKENS.has(namedSize[1])) return "text-size";
-
-  if (/^text-[a-z]+-\d+$/.test(pure)) return "text-color";
-  if (/^text-(black|white|transparent|current)$/.test(pure)) return "text-color";
-
-  return null;
+  if (!category) return null;
+  return variant ? `${variant}:${category}` : category;
 };
 
 /**
@@ -92,12 +120,12 @@ export function mergeClasses(defaultClasses: ClassValue, customClasses?: ClassVa
   }
 
   const customCategories = new Set(
-    customList.map(getCategory).filter((cat): cat is string => cat !== null),
+    customList.map(getCategoryKey).filter((cat): cat is string => cat !== null),
   );
 
   const filteredDefaults = defaultList.filter((defCls) => {
-    const cat = getCategory(defCls);
-    return !(cat && customCategories.has(cat));
+    const catKey = getCategoryKey(defCls);
+    return !(catKey && customCategories.has(catKey));
   });
 
   return [...filteredDefaults, ...customList].join(" ");

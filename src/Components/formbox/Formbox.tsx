@@ -17,7 +17,10 @@ function FormboxInner(props: FormboxProps) {
     open,
     onOpenChange,
     className,
+    containerClassName,
+    innerContainerClassName,
     title,
+    description,
     fields,
     buttons,
     messages,
@@ -46,8 +49,13 @@ function FormboxInner(props: FormboxProps) {
           const run = async () => {
             await onSubmit(data);
           };
-          if (toast) await runWithToast(run(), toast);
-          else await run();
+          if (toast && typeof toast === "object") {
+            await runWithToast(run(), toast);
+          } else if (toast === true) {
+            await runWithToast(run(), {});
+          } else {
+            await run();
+          }
         }
       : legacySubmit
         ? async (data) => {
@@ -101,6 +109,8 @@ function FormboxInner(props: FormboxProps) {
   if (!open) return null;
 
   const isSubmitting = engine.submitting || externalLoading;
+  const isCloseIconVisible =
+    closeFormIcon !== undefined ? closeFormIcon : mode === "modal";
 
   const cardContent = (
     <div
@@ -110,29 +120,44 @@ function FormboxInner(props: FormboxProps) {
           "flex flex-col relative z-10 bg-white p-6 md:p-8 rounded-2xl shadow-xl w-full border border-gray-200",
           mode === "modal" ? "max-h-[90vh] max-w-xl" : "",
         ],
-        className,
+        mergeClasses(className, containerClassName),
       )}
     >
       <form
         onSubmit={engine.handleSubmit}
         noValidate
-        className="flex flex-col h-full min-h-0"
+        className={mergeClasses(
+          "flex flex-col h-full min-h-0",
+          innerContainerClassName,
+        )}
       >
-        {title && (
-          <div className="flex-shrink-0 mb-4">
-            <div
-              className={mergeClasses(
-                "text-gray-800 text-3xl font-semibold",
-                title.className,
-              )}
-            >
-              {title.text}
-            </div>
-            {closeFormIcon && (
+        {(title || description || isCloseIconVisible) && (
+          <div className="flex-shrink-0 mb-4 relative">
+            {title && (
+              <div
+                className={mergeClasses(
+                  "text-gray-800 text-3xl font-semibold",
+                  title.className,
+                )}
+              >
+                {title.text}
+              </div>
+            )}
+            {description && (
+              <div
+                className={mergeClasses(
+                  "text-gray-500 text-sm mt-1",
+                  description.className,
+                )}
+              >
+                {description.text}
+              </div>
+            )}
+            {isCloseIconVisible && (
               <button
                 type="button"
                 onClick={() => onOpenChange(false)}
-                className="absolute top-4 right-6 text-gray-500 hover:text-gray-700 bg-transparent border-none cursor-pointer p-1 transition-colors"
+                className="absolute top-0 right-0 text-gray-500 hover:text-gray-700 bg-transparent border-none cursor-pointer p-1 transition-colors"
                 aria-label="Close form"
               >
                 <svg
@@ -153,11 +178,22 @@ function FormboxInner(props: FormboxProps) {
           </div>
         )}
 
-        <div className="flex-1 overflow-y-auto space-y-4 pr-2">
+        <div
+          className={mergeClasses(
+            "flex-1 overflow-y-auto space-y-4 pr-2",
+            innerContainerClassName,
+          )}
+        >
           {engine.visibleFields.map((field) => (
             <div
               key={field.name}
-              className="flex flex-col justify-start items-start w-full"
+              className={mergeClasses(
+                "flex flex-col justify-start items-start w-full",
+                field.wrapperClassName ||
+                  field.fieldWrapperClassName ||
+                  field.fieldContainerClassName ||
+                  normalized.fieldWrapperClassName,
+              )}
             >
               <Inputtag
                 textfield={fieldToLegacyShape(field)}
@@ -165,6 +201,13 @@ function FormboxInner(props: FormboxProps) {
                 onChange={engine.setFieldValue}
                 className={field.className}
                 formErrors={engine.formErrors}
+                formLabelClassName={normalized.labelClassName}
+                formRequiredClassName={normalized.requiredClassName}
+                formErrorClassName={normalized.errorClassName}
+                formFocusClassName={normalized.focusClassName}
+                formPasswordToggleClassName={normalized.passwordToggleClassName}
+                formInputClassName={normalized.inputClassName}
+                formErrorPosition={normalized.errorPosition}
                 onAddArrayItem={() =>
                   engine.addArrayItem(field.name, field.fields)
                 }
@@ -191,7 +234,12 @@ function FormboxInner(props: FormboxProps) {
         </div>
 
         {buttons.length > 0 && (
-          <div className="flex-shrink-0 pt-4 mt-2 border-t border-gray-100 flex justify-end gap-3 bg-white">
+          <div
+            className={mergeClasses(
+              "flex-shrink-0 pt-4 mt-2 flex justify-end gap-3 bg-transparent",
+              normalized.buttonContainerClassName,
+            )}
+          >
             {buttons.map((btn, index) => (
               <Buttontag
                 key={index}
@@ -254,7 +302,8 @@ function FormboxInner(props: FormboxProps) {
     </div>
   );
 
-  const targetContainer = container || (typeof document !== "undefined" ? document.body : null);
+  const targetContainer =
+    container || (typeof document !== "undefined" ? document.body : null);
 
   if (!targetContainer) return modal;
 
@@ -262,11 +311,13 @@ function FormboxInner(props: FormboxProps) {
 }
 
 function Formbox(props: FormboxProps) {
+  const toastConfig = typeof props.toast === "object" ? props.toast : undefined;
+
   return (
     <FormToastProvider
-      position={props.toast?.position}
-      duration={props.toast?.duration}
-      dismissible={props.toast?.dismissible}
+      position={toastConfig?.position}
+      duration={toastConfig?.duration}
+      dismissible={toastConfig?.dismissible}
     >
       <FormboxInner {...props} />
     </FormToastProvider>

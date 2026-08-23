@@ -1,6 +1,7 @@
 import type {
   FormboxProps,
   FormButton,
+  FormDescriptionConfig,
   FormField,
   FormMessage,
   FormTitleConfig,
@@ -31,6 +32,7 @@ function normalizeField(field: LegacyField): NormalizedField {
     searchable: field.searchable ?? false,
     passwordToggle: field.passwordToggle ?? false,
     resolvedOptions: field.options ?? [],
+    wrapperClassName: field.wrapperClassName ?? field.fieldWrapperClassName ?? field.fieldContainerClassName,
   };
 }
 
@@ -58,6 +60,14 @@ function normalizeTitle(props: FormboxProps): FormTitleConfig | undefined {
       text: props.formtitle[0].title,
       className: props.formtitle[0].className,
     };
+  }
+  return undefined;
+}
+
+function normalizeDescription(props: FormboxProps): FormDescriptionConfig | undefined {
+  if (props.description !== undefined) {
+    if (typeof props.description === "string") return { text: props.description };
+    return props.description;
   }
   return undefined;
 }
@@ -94,7 +104,12 @@ export function normalizeFormboxProps(props: FormboxProps): NormalizedFormboxPro
     open: usesOpenProp ? (props.open as boolean) : true,
     onOpenChange,
     className: props.className,
+    containerClassName: props.containerClassName,
+    innerContainerClassName: props.innerContainerClassName,
+    buttonContainerClassName: props.buttonContainerClassName,
+    inputClassName: props.inputClassName,
     title: normalizeTitle(props),
+    description: normalizeDescription(props),
     fields: rawFields.map(normalizeField),
     buttons: (props.buttons ?? []).map(normalizeButton),
     messages: normalizeMessages(props),
@@ -102,6 +117,13 @@ export function normalizeFormboxProps(props: FormboxProps): NormalizedFormboxPro
     onSubmit: props.onSubmit as NormalizedFormboxProps["onSubmit"],
     toast: props.toast,
     closeFormIcon: props.closeFormIcon,
+    labelClassName: props.labelClassName,
+    requiredClassName: props.requiredClassName,
+    errorClassName: props.errorClassName,
+    focusClassName: props.focusClassName,
+    fieldWrapperClassName: props.fieldWrapperClassName,
+    passwordToggleClassName: props.passwordToggleClassName,
+    errorPosition: props.errorPosition,
     children: props.children,
     mode,
     container: props.container,

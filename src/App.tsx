@@ -135,7 +135,12 @@ function App() {
               type: "select",
               searchable: true,
               maxSelect: 3,
+              className: "bg-gray-900 border-gray-700 text-white",
+              dropdownClassName: "bg-gray-900 border-gray-700",
+              optionsClassName:
+                "text-gray-200 hover:bg-gray-800 hover:text-white",
               required: true,
+              default: { label: "Admin", value: "admin" },
               options: [
                 { label: "Admin", value: "admin" },
                 { label: "User", value: "user" },

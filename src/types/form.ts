@@ -30,6 +30,7 @@ export interface ShowWhen {
 export interface FormField {
   name: string;
   type?: FieldType | string;
+  default?: { label: string; value: string | string[] };
   label?: string;
   placeholder?: string;
   required?: boolean;
@@ -48,6 +49,20 @@ export interface FormField {
   icon?: { show?: React.ComponentType; hide?: React.ComponentType };
   showWhen?: ShowWhen;
   dependsOn?: string;
+  /** Field label styling */
+  labelClassName?: ClassValue;
+  /** Required asterisk (*) styling */
+  requiredClassName?: ClassValue;
+  /** Error message styling */
+  errorClassName?: ClassValue;
+  /** Input focus state styling */
+  focusClassName?: ClassValue;
+  /** Field container / wrapper spacing and styling */
+  wrapperClassName?: ClassValue;
+  fieldWrapperClassName?: ClassValue;
+  fieldContainerClassName?: ClassValue;
+  /** Password toggle button styling */
+  passwordToggleClassName?: ClassValue;
   /** Custom text for array add button */
   addButtonText?: string;
   addBtnText?: string;
@@ -64,9 +79,23 @@ export interface FormField {
   itemClassName?: ClassValue;
   /** Nested fields when type is "array" */
   fields?: FormField[];
+  /** Validation error message position: "top" (inline on label top-right) or "bottom" (below input field) */
+  errorPosition?: "top" | "bottom";
+  /** Inline CSS style object for field */
+  dropdownClassName?: ClassValue;
+  /** Custom classes for select and multiselect options */
+  optionsClassName?: ClassValue;
+  /** @deprecated Use optionsClassName instead */
+  optionClassName?: ClassValue;
+  style?: React.CSSProperties;
 }
 
 export interface FormTitleConfig {
+  text: string;
+  className?: ClassValue;
+}
+
+export interface FormDescriptionConfig {
   text: string;
   className?: ClassValue;
 }
@@ -80,9 +109,12 @@ export interface FormButton {
   name: string;
   type: "submit" | "reset" | "cancel" | "ok" | "button";
   className?: ClassValue;
+  style?: React.CSSProperties;
   ariaLabel?: string;
   tooltip?: string;
   disabled?: boolean;
+  disabledClassName?: ClassValue;
+  loadingText?: string;
   onClick?: (data: unknown, e: React.MouseEvent) => void | Promise<void>;
   loader?: { loading?: boolean; className?: ClassValue };
   /** Show built-in toast when this button's onClick is triggered */
@@ -119,14 +151,29 @@ export interface FormboxProps<TSchema extends z.ZodTypeAny = z.ZodTypeAny> {
   open?: boolean;
   onOpenChange?: (open: boolean) => void;
   className?: ClassValue;
+  containerClassName?: ClassValue;
+  innerContainerClassName?: ClassValue;
   title?: string | FormTitleConfig;
+  description?: string | FormDescriptionConfig;
   fields?: FormField[];
   buttons?: FormButton[];
   message?: FormMessage[];
   schema?: TSchema;
   onSubmit?: (data: z.infer<TSchema>) => void | Promise<void>;
-  toast?: ToastMessages;
+  toast?: boolean | ToastMessages;
   closeFormIcon?: boolean;
+
+  /** Default field styling options for all fields in the form */
+  labelClassName?: ClassValue;
+  requiredClassName?: ClassValue;
+  errorClassName?: ClassValue;
+  focusClassName?: ClassValue;
+  fieldWrapperClassName?: ClassValue;
+  passwordToggleClassName?: ClassValue;
+  inputClassName?: ClassValue;
+  buttonContainerClassName?: ClassValue;
+  /** Validation error message position for fields: "top" (default) or "bottom" */
+  errorPosition?: "top" | "bottom";
 
   /** Custom child elements rendered inside the form body */
   children?: React.ReactNode;
@@ -168,14 +215,26 @@ export interface NormalizedFormboxProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   className?: ClassValue;
+  containerClassName?: ClassValue;
+  innerContainerClassName?: ClassValue;
+  buttonContainerClassName?: ClassValue;
+  inputClassName?: ClassValue;
   title?: FormTitleConfig;
+  description?: FormDescriptionConfig;
   fields: NormalizedField[];
   buttons: FormButton[];
   messages: FormMessage[];
   schema?: z.ZodTypeAny;
   onSubmit?: (data: unknown) => void | Promise<void>;
-  toast?: ToastMessages;
+  toast?: boolean | ToastMessages;
   closeFormIcon?: boolean;
+  labelClassName?: ClassValue;
+  requiredClassName?: ClassValue;
+  errorClassName?: ClassValue;
+  focusClassName?: ClassValue;
+  fieldWrapperClassName?: ClassValue;
+  passwordToggleClassName?: ClassValue;
+  errorPosition?: "top" | "bottom";
   children?: React.ReactNode;
   mode: "modal" | "inline";
   container?: HTMLElement | Element | null;

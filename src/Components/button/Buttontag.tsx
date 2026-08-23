@@ -13,6 +13,7 @@ interface Props {
   setformdata: React.Dispatch<React.SetStateAction<{ [key: string]: any }>>;
   initialFormData: { [key: string]: any };
   className?: ClassValue;
+  style?: React.CSSProperties;
   action?: (data: any, e: React.MouseEvent) => void | Promise<void>;
   arialabel?: string;
   tooltip?: string;
@@ -57,9 +58,16 @@ function Buttontag(props: Props) {
     setformdata(initialFormData);
   };
 
-  // Button Wrrapper Function
+  const isFullWidth = (cls?: ClassValue): boolean => {
+    if (!cls) return false;
+    if (typeof cls === "string") return cls.includes("w-full");
+    if (Array.isArray(cls)) return cls.some((c) => typeof c === "string" && c.includes("w-full"));
+    return false;
+  };
+
+  // Button Wrapper Function
   const ButtonWrapper = ({ children }: { children: React.ReactNode }) => (
-    <div className="relative group inline-block">
+    <div className={mergeClasses("relative group", isFullWidth(className) ? "w-full" : "inline-block")}>
       {children}
       {/* Tooltip */}
       {!loader?.loader && tooltip && (
@@ -81,6 +89,7 @@ function Buttontag(props: Props) {
               `${baseBtnStyle} bg-[#0878ce] text-white hover:bg-[#2a6898]`,
               className
             )}
+            style={value.style || props.style}
             type={value.type}
             onClick={(e) => handleAction(null, e)}
             aria-label={arialabel}
@@ -96,6 +105,7 @@ function Buttontag(props: Props) {
               `${baseBtnStyle} bg-gray-200 text-[#3089cd] hover:bg-gray-300`,
               className
             )}
+            style={value.style || props.style}
             type={value.type}
             onClick={handleResetFn}
             aria-label={arialabel}
@@ -112,24 +122,37 @@ function Buttontag(props: Props) {
               `${baseBtnStyle} bg-[#0878ce] text-white hover:bg-[#2a6898] ${
                 disabled ? "opacity-50 cursor-not-allowed pointer-events-none" : ""
               }`,
-              className
+              mergeClasses(className, disabled ? (value.disabledClassName || value.disabledClass) : undefined)
             )}
+            style={value.style || props.style}
             type={value.type}
             aria-label={arialabel}
             disabled={disabled}
           >
             {loader?.loader ? (
-              <>
-                <span className="text-sm tracking-wide invisible">
-                  {value.name}
+              value.loadingText ? (
+                <span className="flex items-center justify-center gap-2">
+                  <span
+                    className={mergeClasses(
+                      "h-4 w-4 rounded-full animate-spin border-2 border-current border-t-transparent inline-block shrink-0",
+                      loader?.className
+                    )}
+                  />
+                  <span>{value.loadingText}</span>
                 </span>
-                <span
-                  className={mergeClasses(
-                    "absolute left-[42%] h-5 w-5 rounded-full animate-spin border-2 border-white border-t-transparent",
-                    loader?.className
-                  )}
-                ></span>
-              </>
+              ) : (
+                <>
+                  <span className="text-sm tracking-wide invisible">
+                    {value.name}
+                  </span>
+                  <span
+                    className={mergeClasses(
+                      "absolute left-[42%] h-5 w-5 rounded-full animate-spin border-2 border-white border-t-transparent",
+                      loader?.className
+                    )}
+                  ></span>
+                </>
+              )
             ) : (
               <>{value.name}</>
             )}
