@@ -38,8 +38,12 @@ import "react-form-toaster/dist/index.css";
 
 | Prop              | Type                                      | Default     | Required | Description                                                        |
 | ----------------- | ----------------------------------------- | ----------- | -------- | ------------------------------------------------------------------ |
-| `open`            | `boolean`                                 | `false`     | ✅        | Controls modal visibility.                                         |
-| `onOpenChange`    | `(open: boolean) => void`                 | —           | ✅        | Called when the modal requests to open/close (backdrop click, ✕). |
+| `open`            | `boolean`                                 | `true`      | ❌        | Controls form visibility.                                          |
+| `onOpenChange`    | `(open: boolean) => void`                 | —           | ❌        | Called when modal requests to open/close (backdrop click, ✕).      |
+| `mode`            | `"modal" \| "inline"`                     | `"modal"`   | ❌        | Display mode: `"modal"` (popup portal) or `"inline"` (embedded card). |
+| `inline`          | `boolean`                                 | `false`     | ❌        | Shorthand for `mode="inline"`. Renders form card inline.           |
+| `container`       | `HTMLElement \| Element \| null`           | `document.body` | ❌   | Target DOM element for portal rendering in modal mode.              |
+| `children`        | `React.ReactNode`                         | —           | ❌        | Custom React nodes rendered inside the form body container.        |
 | `fields`          | `FormField[]`                             | `[]`        | ❌        | Array of field definitions to render inside the form.              |
 | `buttons`         | `FormButton[]`                            | `[]`        | ❌        | Array of button definitions (submit, reset, cancel, ok).           |
 | `title`           | `string \| { text: string; className? }` | —           | ❌        | Form heading. Accepts a plain string or object with classNames.    |

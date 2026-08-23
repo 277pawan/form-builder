@@ -128,6 +128,15 @@ export interface FormboxProps<TSchema extends z.ZodTypeAny = z.ZodTypeAny> {
   toast?: ToastMessages;
   closeFormIcon?: boolean;
 
+  /** Custom child elements rendered inside the form body */
+  children?: React.ReactNode;
+  /** Display mode: "modal" (portal backdrop) or "inline" (embedded component). Defaults to "modal". */
+  mode?: "modal" | "inline";
+  /** Shorthand for mode="inline". If true, renders inline without modal backdrop or portal. */
+  inline?: boolean;
+  /** Custom portal target container element for modal mode. Defaults to document.body. */
+  container?: HTMLElement | Element | null;
+
   /** @deprecated Use `onOpenChange` */
   formtoogle?: React.Dispatch<React.SetStateAction<boolean>>;
   /** @deprecated Use `title` */
@@ -167,4 +176,7 @@ export interface NormalizedFormboxProps {
   onSubmit?: (data: unknown) => void | Promise<void>;
   toast?: ToastMessages;
   closeFormIcon?: boolean;
+  children?: React.ReactNode;
+  mode: "modal" | "inline";
+  container?: HTMLElement | Element | null;
 }

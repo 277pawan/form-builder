@@ -88,6 +88,8 @@ export function normalizeFormboxProps(props: FormboxProps): NormalizedFormboxPro
     else if (props.formtoogle) props.formtoogle(open);
   };
 
+  const mode: "modal" | "inline" = props.inline ? "inline" : (props.mode ?? "modal");
+
   return {
     open: usesOpenProp ? (props.open as boolean) : true,
     onOpenChange,
@@ -100,6 +102,9 @@ export function normalizeFormboxProps(props: FormboxProps): NormalizedFormboxPro
     onSubmit: props.onSubmit as NormalizedFormboxProps["onSubmit"],
     toast: props.toast,
     closeFormIcon: props.closeFormIcon,
+    children: props.children,
+    mode,
+    container: props.container,
   };
 }
 

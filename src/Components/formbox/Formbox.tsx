@@ -25,6 +25,9 @@ function FormboxInner(props: FormboxProps) {
     onSubmit,
     toast,
     closeFormIcon,
+    children,
+    mode,
+    container,
   } = normalized;
 
   const formref = useRef<HTMLDivElement>(null);
@@ -70,7 +73,7 @@ function FormboxInner(props: FormboxProps) {
   onOpenChangeRef.current = onOpenChange;
 
   useEffect(() => {
-    if (!open) return;
+    if (!open || mode === "inline") return;
 
     justOpenedRef.current = true;
     const openGuard = window.setTimeout(() => {
@@ -93,152 +96,169 @@ function FormboxInner(props: FormboxProps) {
       window.clearTimeout(timer);
       document.removeEventListener("mousedown", handleClickOutside);
     };
-  }, [open]);
+  }, [open, mode]);
 
   if (!open) return null;
 
   const isSubmitting = engine.submitting || externalLoading;
 
-  const modal = (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-4">
-      <div
-        ref={formref}
-        className={mergeClasses(
-          "max-h-[90vh] flex flex-col relative z-10 bg-white p-6 md:p-8 rounded-2xl shadow-xl w-full max-w-xl border border-gray-200",
-          className,
-        )}
+  const cardContent = (
+    <div
+      ref={formref}
+      className={mergeClasses(
+        [
+          "flex flex-col relative z-10 bg-white p-6 md:p-8 rounded-2xl shadow-xl w-full border border-gray-200",
+          mode === "modal" ? "max-h-[90vh] max-w-xl" : "",
+        ],
+        className,
+      )}
+    >
+      <form
+        onSubmit={engine.handleSubmit}
+        noValidate
+        className="flex flex-col h-full min-h-0"
       >
-        <form
-          onSubmit={engine.handleSubmit}
-          noValidate
-          className="flex flex-col h-full min-h-0"
-        >
-          {title && (
-            <div className="flex-shrink-0 mb-4">
-              <div
-                className={mergeClasses(
-                  "text-gray-800 text-3xl font-semibold",
-                  title.className,
-                )}
-              >
-                {title.text}
-              </div>
-              {closeFormIcon && (
-                <button
-                  type="button"
-                  onClick={() => onOpenChange(false)}
-                  className="absolute top-4 right-6 text-gray-500 hover:text-gray-700 bg-transparent border-none cursor-pointer p-1 transition-colors"
-                  aria-label="Close form"
-                >
-                  <svg
-                    className="w-5 h-5"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M6 18L18 6M6 6l12 12"
-                    />
-                  </svg>
-                </button>
+        {title && (
+          <div className="flex-shrink-0 mb-4">
+            <div
+              className={mergeClasses(
+                "text-gray-800 text-3xl font-semibold",
+                title.className,
               )}
+            >
+              {title.text}
             </div>
-          )}
-
-          <div className="flex-1 overflow-y-auto space-y-4 pr-2">
-            {engine.visibleFields.map((field) => (
-              <div
-                key={field.name}
-                className="flex flex-col justify-start items-start w-full"
+            {closeFormIcon && (
+              <button
+                type="button"
+                onClick={() => onOpenChange(false)}
+                className="absolute top-4 right-6 text-gray-500 hover:text-gray-700 bg-transparent border-none cursor-pointer p-1 transition-colors"
+                aria-label="Close form"
               >
-                <Inputtag
-                  textfield={fieldToLegacyShape(field)}
-                  value={engine.formData[field.name]}
-                  onChange={engine.setFieldValue}
-                  className={field.className}
-                  formErrors={engine.formErrors}
-                  onAddArrayItem={() =>
-                    engine.addArrayItem(field.name, field.fields)
-                  }
-                  onRemoveArrayItem={(index) =>
-                    engine.removeArrayItem(field.name, index)
-                  }
-                  onUpdateArrayItem={(index, subName, val) =>
-                    engine.updateArrayItem(field.name, index, subName, val)
-                  }
-                />
-              </div>
-            ))}
-
-            {messages.map((msg, index) => (
-              <dd
-                key={index}
-                className={mergeClasses("text-sm text-gray-600", msg.className)}
-              >
-                {msg.text}
-              </dd>
-            ))}
+                <svg
+                  className="w-5 h-5"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M6 18L18 6M6 6l12 12"
+                  />
+                </svg>
+              </button>
+            )}
           </div>
+        )}
 
-          {buttons.length > 0 && (
-            <div className="flex-shrink-0 pt-4 mt-2 border-t border-gray-100 flex justify-end gap-3 bg-white">
-              {buttons.map((btn, index) => (
-                <Buttontag
-                  key={index}
-                  value={{
-                    ...btn,
-                    function: btn.onClick,
-                    loader: btn.loader
+        <div className="flex-1 overflow-y-auto space-y-4 pr-2">
+          {engine.visibleFields.map((field) => (
+            <div
+              key={field.name}
+              className="flex flex-col justify-start items-start w-full"
+            >
+              <Inputtag
+                textfield={fieldToLegacyShape(field)}
+                value={engine.formData[field.name]}
+                onChange={engine.setFieldValue}
+                className={field.className}
+                formErrors={engine.formErrors}
+                onAddArrayItem={() =>
+                  engine.addArrayItem(field.name, field.fields)
+                }
+                onRemoveArrayItem={(index) =>
+                  engine.removeArrayItem(field.name, index)
+                }
+                onUpdateArrayItem={(index, subName, val) =>
+                  engine.updateArrayItem(field.name, index, subName, val)
+                }
+              />
+            </div>
+          ))}
+
+          {children}
+
+          {messages.map((msg, index) => (
+            <dd
+              key={index}
+              className={mergeClasses("text-sm text-gray-600", msg.className)}
+            >
+              {msg.text}
+            </dd>
+          ))}
+        </div>
+
+        {buttons.length > 0 && (
+          <div className="flex-shrink-0 pt-4 mt-2 border-t border-gray-100 flex justify-end gap-3 bg-white">
+            {buttons.map((btn, index) => (
+              <Buttontag
+                key={index}
+                value={{
+                  ...btn,
+                  function: btn.onClick,
+                  loader: btn.loader
+                    ? {
+                        loader:
+                          btn.type === "submit"
+                            ? isSubmitting
+                            : btn.loader.loading,
+                        className: btn.loader.className,
+                      }
+                    : btn.type === "submit" && isSubmitting
+                      ? { loader: true }
+                      : undefined,
+                }}
+                setformdata={() => {
+                  engine.resetForm();
+                }}
+                initialFormData={engine.formData}
+                className={btn.className}
+                action={btn.onClick}
+                toast={btn.toast}
+                runWithToast={runWithToast}
+                tooltip={btn.tooltip}
+                arialabel={btn.ariaLabel}
+                disabled={
+                  btn.disabled || (btn.type === "submit" && isSubmitting)
+                }
+                loader={
+                  btn.type === "submit"
+                    ? {
+                        loader: isSubmitting,
+                        className: btn.loader?.className,
+                      }
+                    : btn.loader
                       ? {
-                          loader:
-                            btn.type === "submit"
-                              ? isSubmitting
-                              : btn.loader.loading,
+                          loader: btn.loader.loading ?? false,
                           className: btn.loader.className,
                         }
-                      : btn.type === "submit" && isSubmitting
-                        ? { loader: true }
-                        : undefined,
-                  }}
-                  setformdata={() => {
-                    engine.resetForm();
-                  }}
-                  initialFormData={engine.formData}
-                  className={btn.className}
-                  action={btn.onClick}
-                  toast={btn.toast}
-                  runWithToast={runWithToast}
-                  tooltip={btn.tooltip}
-                  arialabel={btn.ariaLabel}
-                  disabled={
-                    btn.disabled || (btn.type === "submit" && isSubmitting)
-                  }
-                  loader={
-                    btn.type === "submit"
-                      ? {
-                          loader: isSubmitting,
-                          className: btn.loader?.className,
-                        }
-                      : btn.loader
-                        ? {
-                            loader: btn.loader.loading ?? false,
-                            className: btn.loader.className,
-                          }
-                        : undefined
-                  }
-                />
-              ))}
-            </div>
-          )}
-        </form>
-      </div>
+                      : undefined
+                }
+              />
+            ))}
+          </div>
+        )}
+      </form>
     </div>
   );
 
-  return createPortal(modal, document.body);
+  if (mode === "inline") {
+    return cardContent;
+  }
+
+  const modal = (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-4">
+      {cardContent}
+    </div>
+  );
+
+  const targetContainer = container || (typeof document !== "undefined" ? document.body : null);
+
+  if (!targetContainer) return modal;
+
+  return createPortal(modal, targetContainer);
 }
 
 function Formbox(props: FormboxProps) {
