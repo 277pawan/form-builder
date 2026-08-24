@@ -57,134 +57,283 @@ className="bg-pink-600 text-white"
 
 ## Complete Dark UI Example (Figma-ready)
 
+## Examples
+
+### 1. Complete Account Form
+
+A more realistic example showing validation, multiple field types, conditional fields, password visibility, custom styling, and toast notifications.
+
 ```tsx
 import Formbox from "react-form-toaster";
 import "react-form-toaster/dist/index.css";
 import { z } from "zod";
 
 const schema = z.object({
-  firstname: z.string().min(1, "First name is required"),
+  firstName: z.string().min(1, "First name is required"),
+  lastName: z.string().min(1, "Last name is required"),
   email: z.string().email("Enter a valid email"),
-  password: z.string().min(8, "Must be 8+ chars"),
+  accountType: z.enum(["personal", "business"]),
+  companyName: z.string().optional(),
+  password: z.string().min(8, "Password must be at least 8 characters"),
 });
 
-export function HeroFormDemo() {
+export function AccountForm() {
   return (
-    <div className="min-h-screen flex items-center justify-center p-4"
-         style={{ backgroundColor: "#080a0f" }}>
-      <div className="w-full max-w-sm">
-        <Formbox
-          open={true}
-          onOpenChange={() => {}}
-          mode="inline"
-          closeFormIcon={false}
-          errorPosition="bottom"
+    <Formbox
+      open={true}
+      onOpenChange={() => {}}
+      mode="inline"
+      closeFormIcon={false}
+      errorPosition="bottom"
 
-          containerClassName="w-full rounded-2xl p-6 shadow-2xl overflow-visible"
-          innerContainerClassName="space-y-4 overflow-visible"
-          buttonContainerClassName="pt-3 flex w-full"
-          inputClassName="rounded-xl border"
+      containerClassName="w-full max-w-lg mx-auto rounded-2xl p-6 shadow-2xl"
+      innerContainerClassName="space-y-4"
+      buttonContainerClassName="pt-4 flex w-full"
+      inputClassName="rounded-xl"
 
-          title={{
-            text: "Create an account",
-            className: "text-2xl font-bold text-white mb-1",
-          }}
-          description={{
-            text: "Enter your details to test the form live.",
-            className: "text-sm mb-5 text-gray-400",
-          }}
+      title={{
+        text: "Create your account",
+        className: "text-2xl font-bold text-gray-900 mb-1",
+      }}
 
-          labelClassName="block text-sm font-medium mb-1.5"
-          requiredClassName="ml-0.5"
-          errorClassName="text-xs font-medium mt-1.5 block"
+      description={{
+        text: "Fill in your details to get started.",
+        className: "text-sm text-gray-500 mb-5",
+      }}
 
-          schema={schema}
-          onSubmit={async (data) => {
-            console.log("Submitted:", data);
-          }}
+      labelClassName="block text-sm font-medium mb-1.5 text-gray-700"
+      requiredClassName="ml-1 text-red-500"
+      errorClassName="text-xs font-medium mt-1.5 block text-red-500"
 
-          toast={{
-            loading: "Creating account...",
-            success: "Account created! 🎉",
-            error: "Something went wrong",
-            position: "bottom-right",
-          }}
+      schema={schema}
 
-          fields={[
+      onSubmit={async (data) => {
+        // Simulate an API request
+        await new Promise((resolve) => setTimeout(resolve, 1500));
+
+        console.log("Submitted:", data);
+      }}
+
+      toast={{
+        loading: "Creating account...",
+        success: "Account created successfully! 🎉",
+        error: "Something went wrong",
+        position: "bottom-right",
+      }}
+
+      fields={[
+        {
+          name: "firstName",
+          type: "text",
+          label: "First Name",
+          placeholder: "Sarah",
+          required: true,
+          className: "w-full rounded-xl",
+        },
+
+        {
+          name: "lastName",
+          type: "text",
+          label: "Last Name",
+          placeholder: "Johnson",
+          required: true,
+          className: "w-full rounded-xl",
+        },
+
+        {
+          name: "email",
+          type: "email",
+          label: "Email",
+          placeholder: "sarah@example.com",
+          required: true,
+          className: "w-full rounded-xl",
+        },
+
+        {
+          name: "accountType",
+          type: "select",
+          label: "Account Type",
+          required: true,
+          options: [
             {
-              name: "firstname",
-              type: "text",
-              label: "First Name",
-              placeholder: "Sarah",
-              required: true,
-              // ✅ style for colors — guaranteed to work
-              style: {
-                backgroundColor: "#12141c",
-                border: "1px solid #252836",
-                color: "#ffffff",
-                borderRadius: "12px",
-              },
-              labelClassName: "text-[#d1d5db] text-sm font-medium",
-              requiredClassName: "text-[#ef4444]",
-              errorClassName: "text-[#ef4444] text-xs mt-1 block",
+              label: "Personal",
+              value: "personal",
             },
             {
-              name: "email",
-              type: "email",
-              label: "Email",
-              placeholder: "sarah@design.dev",
-              required: true,
-              style: {
-                backgroundColor: "#12141c",
-                border: "1px solid #252836",
-                color: "#ffffff",
-                borderRadius: "12px",
-              },
-              labelClassName: "text-[#d1d5db] text-sm font-medium",
-              requiredClassName: "text-[#ef4444]",
-              errorClassName: "text-[#ef4444] text-xs mt-1 block",
+              label: "Business",
+              value: "business",
             },
-            {
-              name: "password",
-              type: "password",
-              label: "Password",
-              placeholder: "Must be 8+ chars",
-              required: true,
-              passwordToggle: true,
-              style: {
-                backgroundColor: "#12141c",
-                border: "1px solid #252836",
-                color: "#ffffff",
-                borderRadius: "12px",
-              },
-              labelClassName: "text-[#d1d5db] text-sm font-medium",
-              requiredClassName: "text-[#ef4444]",
-              errorClassName: "text-[#ef4444] text-xs mt-1 block",
-              passwordToggleClassName: "text-[#6b7280] hover:text-white transition-colors",
-            },
-          ]}
+          ],
+          className: "w-full rounded-xl",
+          dropdownClassName: "rounded-xl shadow-lg",
+          optionsClassName: "hover:bg-gray-100",
+        },
 
-          buttons={[
-            {
-              name: "Create Account",
-              type: "submit",
-              loadingText: "Creating...",
-              // ✅ Layout via className, colors via style
-              className: "w-full rounded-xl py-3 font-semibold text-base cursor-pointer transition-opacity hover:opacity-90",
-              style: {
-                backgroundColor: "#6366f1",
-                color: "#ffffff",
-                border: "none",
-              },
-              disabledClassName: "opacity-50 cursor-not-allowed",
-            },
-          ]}
-        />
-      </div>
-    </div>
+        {
+          name: "companyName",
+          type: "text",
+          label: "Company Name",
+          placeholder: "Acme Inc.",
+          showWhen: {
+            field: "accountType",
+            equals: "business",
+          },
+          className: "w-full rounded-xl",
+        },
+
+        {
+          name: "password",
+          type: "password",
+          label: "Password",
+          placeholder: "At least 8 characters",
+          required: true,
+          passwordToggle: true,
+          className: "w-full rounded-xl",
+          passwordToggleClassName:
+            "text-gray-500 hover:text-gray-900 transition-colors",
+        },
+      ]}
+
+      buttons={[
+        {
+          name: "Create Account",
+          type: "submit",
+          loadingText: "Creating...",
+          className:
+            "w-full rounded-xl py-3 font-semibold cursor-pointer transition-opacity hover:opacity-90",
+          style: {
+            backgroundColor: "#6366f1",
+            color: "#ffffff",
+            border: "none",
+          },
+          disabledClassName: "opacity-50 cursor-not-allowed",
+        },
+      ]}
+    />
   );
 }
 ```
+
+This example demonstrates several features working together:
+
+* Zod validation
+* Multiple field types
+* Select fields
+* Conditional fields with `showWhen`
+* Password visibility toggle
+* Tailwind classes
+* Inline styling
+* Loading state
+* Success/error toasts
+* Async form submission
+
+---
+
+### 2. Confirmation Form
+
+React Form Toaster can also be used for simple confirmation workflows.
+
+For example, you can build a confirmation box before deleting an account, removing a resource, or performing another destructive action.
+
+```tsx
+import Formbox from "react-form-toaster";
+import "react-form-toaster/dist/index.css";
+import { z } from "zod";
+
+const confirmationSchema = z.object({
+  confirmation: z
+    .string()
+    .refine(
+      (value) => value === "DELETE",
+      "Please type DELETE to confirm"
+    ),
+});
+
+export function DeleteConfirmation() {
+  return (
+    <Formbox
+      open={true}
+      onOpenChange={() => {}}
+      mode="modal"
+      errorPosition="bottom"
+
+      containerClassName="w-full max-w-md rounded-2xl p-6 shadow-2xl"
+
+      title={{
+        text: "Delete your account?",
+        className: "text-xl font-bold text-gray-900",
+      }}
+
+      description={{
+        text: "This action cannot be undone. Type DELETE below to confirm.",
+        className: "text-sm text-gray-500 mt-2 mb-5",
+      }}
+
+      labelClassName="block text-sm font-medium text-gray-700 mb-1.5"
+      errorClassName="text-sm text-red-500 mt-1.5"
+
+      schema={confirmationSchema}
+
+      onSubmit={async (data) => {
+        await new Promise((resolve) => setTimeout(resolve, 1500));
+
+        console.log("Confirmed:", data);
+      }}
+
+      toast={{
+        loading: "Deleting account...",
+        success: "Account deleted successfully",
+        error: "Unable to delete account",
+        position: "bottom-right",
+      }}
+
+      fields={[
+        {
+          name: "confirmation",
+          type: "text",
+          label: "Confirmation",
+          placeholder: "Type DELETE",
+          required: true,
+          className: "w-full rounded-xl",
+        },
+      ]}
+
+      buttons={[
+        {
+          name: "Cancel",
+          type: "cancel",
+          className:
+            "rounded-xl px-5 py-3 font-medium border border-gray-300 text-gray-700 hover:bg-gray-50",
+        },
+        {
+          name: "Delete Account",
+          type: "submit",
+          loadingText: "Deleting...",
+          className:
+            "rounded-xl px-5 py-3 font-semibold cursor-pointer transition-opacity hover:opacity-90",
+          style: {
+            backgroundColor: "#dc2626",
+            color: "#ffffff",
+            border: "none",
+          },
+          disabledClassName: "opacity-50 cursor-not-allowed",
+        },
+      ]}
+    />
+  );
+}
+```
+
+This is useful for confirmation flows such as:
+
+* 🗑️ Delete account
+* 🗑️ Delete a project
+* ⚠️ Remove a team member
+* 🔄 Reset application data
+* 📦 Cancel an order
+* 🔐 Confirm a security-sensitive action
+
+The same schema-driven approach can therefore be used for both **full forms** and **smaller interaction flows**.
 
 ---
 
