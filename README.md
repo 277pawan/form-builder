@@ -1,4 +1,4 @@
-# React-Form-Toaster 2.0
+# React-Form-Toaster 2.0.8
 
 [![GitHub Repo](https://github.githubassets.com/favicons/favicon.png) **React-form-toaster**](https://github.com/277pawan/form-builder)
 
