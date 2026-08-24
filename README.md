@@ -55,8 +55,6 @@ className="bg-pink-600 text-white"
 
 ---
 
-## Complete Dark UI Example (Figma-ready)
-
 ## Examples
 
 ### 1. Complete Account Form
