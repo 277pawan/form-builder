@@ -1,185 +1,67 @@
-# React Form Toaster — React Form Builder & Form Validation
+# React-Form-Toaster 2.0.10
 
-[![GitHub Repo](https://github.githubassets.com/favicons/favicon.png) **React Form Toaster**](https://github.com/277pawan/form-builder)
+[![GitHub Repo](https://github.githubassets.com/favicons/favicon.png) **React-form-toaster**](https://github.com/277pawan/form-builder)
+
+> 📖 **Official Documentation:** [react-form-toaster.web.app](https://react-form-toaster.web.app/)
+>
+> The official documentation for **React-Form-Toaster** — explore the complete API reference, examples, configuration options, validation, styling, and usage guides.
 
 [![User Form Demo](https://res.cloudinary.com/dc30b7tnj/video/upload/so_0/form-builder_tibv9z.jpg)](https://res.cloudinary.com/dc30b7tnj/video/upload/v1787248451/form-builder_tibv9z.mp4)
 
 ![Confirmation-form](https://cure-ten.vercel.app/static/media/confirm.4b962f1dee5f2bc649cd.png)
 
-**React Form Toaster** is a Json-schema-driven React form builder and form validation library for creating dynamic forms from a JSON-like configuration.
-
-Define your fields, buttons, validation, conditional logic, styling, and toast messages in a single configuration. React Form Toaster handles form state, validation errors, password visibility, file uploads, loading states, modal forms, inline forms, and toast notifications for you.
-
-It is designed for React and TypeScript applications that need **dynamic forms, schema-based form generation, Zod validation, conditional fields, and built-in form notifications** without writing repetitive HTML, CSS, Form state and Validation code.
-
-## Why React Form Toaster?
-
-Building forms in React often requires repetitive code for:
-
-* Form fields and input state
-* Validation and error messages
-* Submit/loading states
-* Conditional fields
-* Password visibility
-* Select and multiselect controls
-* Modal and inline form layouts
-* Success and error notifications
-* Styling individual form components
-
-React Form Toaster provides a schema-driven approach so you can describe your form configuration once and let the component handle the form behavior.
-
-```text
-Schema
-  ↓
-Fields + Validation + Buttons + Styling
-  ↓
-React Form Toaster
-  ↓
-Dynamic React Form
-  ↓
-Validation + Loading + Toast Notifications
-```
-
-## Key Features
-
-* 📜 **Schema & JSON Driven** — Define fields, buttons, validation, and styling with a clean JSON-like configuration.
-* ⚡ **Less Boilerplate** — Avoid repetitive form fields, state management, and validation error handling.
-* 🔷 **TypeScript & Zod Integration** — Use Zod schemas for type-safe client-side validation.
-* 🎨 **Flexible Styling** — Use Tailwind `className` utilities or inline React `style` objects.
-* 🪟 **Modal & Inline Forms** — Use `mode="modal"` for popup forms or `mode="inline"` for embedded forms.
-* 🍞 **Built-in Toast Notifications** — Show loading, success, and error messages automatically.
-* 🔌 **External Toast Support** — Disable built-in toasts with `toast={false}` and use your preferred toast library.
-* 🔁 **Conditional Fields** — Display fields dynamically with `showWhen`.
-* 📚 **Array Fields** — Build repeatable and nested form groups.
-* 🔐 **Password Fields** — Add password visibility toggles.
-* 📁 **File Uploads** — Support file-based form fields.
-* 🎛️ **Custom Buttons** — Configure submit, reset, cancel, OK, and custom buttons.
-* 📱 **Responsive Styling** — Apply Tailwind responsive utilities directly to form elements.
-
----
-
-## Installation
-
-Install React Form Toaster using npm:
+🎊 React-Form-Toaster is a powerful and flexible library for creating dynamic forms in React. Pass a single JSON-like schema for fields, buttons, validation, and styling — the library handles layout, state, error handling, password toggles, file uploads, and toasts automatically!
 
 ```sh
 npm install react-form-toaster
-```
-
-Or with Yarn:
-
-```sh
+# or
 yarn add react-form-toaster
 ```
 
+## Key Strengths & Features
+
+- 📜 **100% Schema & JSON Driven** — Define your entire form in a clean JSON-like schema.
+- ⚡ **Zero Boilerplate** — No repetitive form fields, state hooks, or error messages.
+- 🎨 **Granular Styling** — Deep control via `className` (Tailwind) **and** `style` (inline CSS).
+- 🔷 **TypeScript & Zod Integration** — Full type safety with Zod schemas for validation.
+- 🖼️ **Modal & Inline Modes** — Embed as a card (`mode="inline"`) or popup (`mode="modal"`).
+- 🍞 **Flexible Toasts** — Built-in toasts or `toast={false}` to use your own library.
+- 🔁 **Array & Conditional Fields** — Repeatable nested groups and `showWhen` visibility.
+
 ---
 
-## Quick Start
+## Quick Setup
 
-Import the component and stylesheet once in your application entry file:
+Import **once** in your app entry file:
 
 ```tsx
 import Formbox from "react-form-toaster";
 import "react-form-toaster/dist/index.css";
 ```
 
-A simple schema-driven React form can then be created like this:
+## Tailwind Classes and `style`
+
+The library ships its Tailwind utility CSS, so standard utility classes passed through `className` work on fields, buttons, titles, descriptions, messages, and containers. This includes colors such as `bg-pink-600` and `text-white`, responsive utilities, spacing, typography, layout, borders, shadows, and common hover/focus states.
+
+Use `className` for normal Tailwind styling. Use `style` for arbitrary values that are not part of the shipped utility set, such as a custom hex color. When both specify the same CSS property, standard CSS precedence applies: inline `style` wins over a class.
 
 ```tsx
-import Formbox from "react-form-toaster";
-import "react-form-toaster/dist/index.css";
-import { z } from "zod";
+// ✅ Standard Tailwind utilities work in className
+className="bg-pink-600 text-white rounded-xl px-4 py-3 font-semibold"
 
-const schema = z.object({
-  name: z.string().min(1, "Name is required"),
-  email: z.string().email("Enter a valid email"),
-});
+// ✅ Inline style is useful for arbitrary values
+style={{ backgroundColor: "#6366f1", color: "#ffffff", borderRadius: "12px" }}
 
-export function ContactForm() {
-  return (
-    <Formbox
-      open={true}
-      onOpenChange={() => {}}
-      mode="inline"
-      schema={schema}
-      onSubmit={async (data) => {
-        console.log(data);
-      }}
-      fields={[
-        {
-          name: "name",
-          type: "text",
-          label: "Name",
-          placeholder: "Your name",
-          required: true,
-        },
-        {
-          name: "email",
-          type: "email",
-          label: "Email",
-          placeholder: "you@example.com",
-          required: true,
-        },
-      ]}
-      buttons={[
-        {
-          name: "Submit",
-          type: "submit",
-          loadingText: "Submitting...",
-        },
-      ]}
-    />
-  );
-}
+// ⚠️ Here the inline color intentionally wins over text-white
+style={{ color: "black" }}
+className="bg-pink-600 text-white"
 ```
 
 ---
 
-## React Form Builder with Zod Validation
+## Examples
 
-React Form Toaster works with [Zod](https://zod.dev/) schemas so you can define validation separately from the visual field configuration.
-
-For example:
-
-```tsx
-const schema = z.object({
-  firstName: z.string().min(1, "First name is required"),
-  email: z.string().email("Enter a valid email"),
-  password: z.string().min(8, "Password must be at least 8 characters"),
-});
-```
-
-The field definitions describe how the form should be rendered:
-
-```tsx
-fields={[
-  {
-    name: "firstName",
-    type: "text",
-    label: "First Name",
-    required: true,
-  },
-  {
-    name: "email",
-    type: "email",
-    label: "Email",
-    required: true,
-  },
-  {
-    name: "password",
-    type: "password",
-    label: "Password",
-    required: true,
-    passwordToggle: true,
-  },
-]}
-```
-
-This separation makes it possible to build reusable and dynamic forms while keeping validation rules in a Zod schema.
-
----
-
-## Complete React Form Example
+### 1. Complete Account Form
 
 A more realistic example showing validation, multiple field types, conditional fields, password visibility, custom styling, and toast notifications.
 
@@ -228,6 +110,7 @@ export function AccountForm() {
       schema={schema}
 
       onSubmit={async (data) => {
+        // Simulate an API request
         await new Promise((resolve) => setTimeout(resolve, 1500));
 
         console.log("Submitted:", data);
@@ -333,81 +216,24 @@ export function AccountForm() {
 }
 ```
 
-This example demonstrates:
+This example demonstrates several features working together:
 
-* Zod validation
-* Multiple field types
-* Select fields
-* Conditional fields with `showWhen`
-* Password visibility toggle
-* Tailwind classes
-* Inline styling
-* Loading state
-* Success and error toasts
-* Async form submission
-
----
-
-## Conditional Fields
-
-Dynamic forms often need fields that appear based on another field's value.
-
-React Form Toaster supports conditional fields with `showWhen`.
-
-```tsx
-{
-  name: "companyName",
-  type: "text",
-  label: "Company Name",
-  showWhen: {
-    field: "accountType",
-    equals: "business",
-  },
-}
-```
-
-For example, the company field can automatically appear when the user selects `Business`.
-
-This can be useful for:
-
-* Registration forms
-* Checkout forms
-* Account forms
-* Profile forms
-* Onboarding forms
-* Multi-purpose forms
+- Zod validation
+- Multiple field types
+- Select fields
+- Conditional fields with `showWhen`
+- Password visibility toggle
+- Tailwind classes
+- Inline styling
+- Loading state
+- Success/error toasts
+- Async form submission
 
 ---
 
-## Modal and Inline React Forms
+### 2. Confirmation Form
 
-React Form Toaster supports two main display modes.
-
-### Inline Form
-
-Use:
-
-```tsx
-mode="inline"
-```
-
-for forms embedded directly into a page or card.
-
-### Modal Form
-
-Use:
-
-```tsx
-mode="modal"
-```
-
-for popup and confirmation workflows.
-
----
-
-## Confirmation Forms
-
-React Form Toaster can also be used for smaller confirmation workflows, not just large forms.
+React Form Toaster can also be used for simple confirmation workflows.
 
 For example, you can build a confirmation box before deleting an account, removing a resource, or performing another destructive action.
 
@@ -419,10 +245,7 @@ import { z } from "zod";
 const confirmationSchema = z.object({
   confirmation: z
     .string()
-    .refine(
-      (value) => value === "DELETE",
-      "Please type DELETE to confirm"
-    ),
+    .refine((value) => value === "DELETE", "Please type DELETE to confirm"),
 });
 
 export function DeleteConfirmation() {
@@ -500,51 +323,73 @@ export function DeleteConfirmation() {
 }
 ```
 
-This is useful for:
+This is useful for confirmation flows such as:
 
-* 🗑️ Delete account
-* 🗑️ Delete a project
-* ⚠️ Remove a team member
-* 🔄 Reset application data
-* 📦 Cancel an order
-* 🔐 Confirm a security-sensitive action
+- 🗑️ Delete account
+- 🗑️ Delete a project
+- ⚠️ Remove a team member
+- 🔄 Reset application data
+- 📦 Cancel an order
+- 🔐 Confirm a security-sensitive action
 
----
-
-## Tailwind CSS and Inline Styles
-
-The library ships its Tailwind utility CSS, so standard utility classes passed through `className` work on fields, buttons, titles, descriptions, messages, and containers.
-
-For example:
-
-```tsx
-className="bg-pink-600 text-white rounded-xl px-4 py-3 font-semibold"
-```
-
-Use `style` for arbitrary CSS values that are not part of the shipped utility set:
-
-```tsx
-style={{
-  backgroundColor: "#6366f1",
-  color: "#ffffff",
-  borderRadius: "12px",
-}}
-```
-
-When both specify the same CSS property, standard CSS precedence applies and inline `style` wins.
-
-```tsx
-style={{ color: "black" }}
-className="bg-pink-600 text-white"
-```
-
-In this example, the inline `color` takes precedence over `text-white`.
+The same schema-driven approach can therefore be used for both **full forms** and **smaller interaction flows**.
 
 ---
 
-## Select and Multiselect Styling
+## Component Attributes & API Reference
 
-For select and multiselect fields, use `dropdownClassName` and `optionsClassName` to style the opened menu and its options.
+### Formbox Props
+
+| Prop                       | Type                             | Default    | Description                                                                                  |
+| -------------------------- | -------------------------------- | ---------- | -------------------------------------------------------------------------------------------- |
+| `open`                     | `boolean`                        | `true`     | Controls form visibility.                                                                    |
+| `onOpenChange`             | `(open: boolean) => void`        | —          | Callback when open/close state changes.                                                      |
+| `mode`                     | `"modal" \| "inline"`            | `"modal"`  | Display mode: modal popup or inline embedded card.                                           |
+| `inline`                   | `boolean`                        | `false`    | Shorthand for `mode="inline"`.                                                               |
+| `fields`                   | `FormField[]`                    | `[]`       | JSON array of field definitions.                                                             |
+| `buttons`                  | `FormButton[]`                   | `[]`       | JSON array of button definitions.                                                            |
+| `title`                    | `string \| { text, className? }` | —          | Form title heading.                                                                          |
+| `description`              | `string \| { text, className? }` | —          | Subtitle text below title.                                                                   |
+| `schema`                   | `z.ZodTypeAny`                   | —          | Zod schema for client-side validation.                                                       |
+| `onSubmit`                 | `(data) => void \| Promise`      | —          | Submit handler called on valid submission.                                                   |
+| `toast`                    | `boolean \| ToastMessages`       | `true`     | Built-in toast config, or `false` for external toast libraries.                              |
+| `containerClassName`       | `ClassValue`                     | —          | Outer card container Tailwind classes.                                                       |
+| `innerContainerClassName`  | `ClassValue`                     | —          | Inner form wrapper Tailwind classes.                                                         |
+| `buttonContainerClassName` | `ClassValue`                     | —          | Button row container classes (use `w-full` for full-width buttons).                          |
+| `inputClassName`           | `ClassValue`                     | —          | Form-level default classes applied to all inputs.                                            |
+| `labelClassName`           | `ClassValue`                     | —          | Form-level default label styling.                                                            |
+| `requiredClassName`        | `ClassValue`                     | —          | Form-level required asterisk (`*`) styling.                                                  |
+| `errorClassName`           | `ClassValue`                     | —          | Form-level validation error text styling.                                                    |
+| `errorPosition`            | `"top" \| "bottom"`              | `"top"`    | Where validation errors appear: `"top"` (inline right of label) or `"bottom"` (below input). |
+| `focusClassName`           | `ClassValue`                     | —          | Form-level focus border/ring classes.                                                        |
+| `fieldWrapperClassName`    | `ClassValue`                     | —          | Form-level field row wrapper styling.                                                        |
+| `passwordToggleClassName`  | `ClassValue`                     | —          | Form-level password toggle icon styling.                                                     |
+| `closeFormIcon`            | `boolean`                        | modal mode | Show/hide the top-right `✕` close button.                                                    |
+
+### FormField Schema Attributes
+
+| Attribute                 | Type                  | Description                                                                                                                           |
+| ------------------------- | --------------------- | ------------------------------------------------------------------------------------------------------------------------------------- |
+| `name`                    | `string`              | **Required.** Unique key matching Zod schema key.                                                                                     |
+| `type`                    | `string`              | Field type: `"text"`, `"email"`, `"password"`, `"number"`, `"checkbox"`, `"radio"`, `"select"`, `"multiselect"`, `"file"`, `"array"`. |
+| `label`                   | `string`              | Label text above input.                                                                                                               |
+| `placeholder`             | `string`              | Placeholder text.                                                                                                                     |
+| `required`                | `boolean`             | Shows required asterisk.                                                                                                              |
+| `className`               | `ClassValue`          | Tailwind layout classes for the input.                                                                                                |
+| `style`                   | `React.CSSProperties` | **✅ Inline CSS object for colors/borders** — use this when Tailwind purging is an issue.                                             |
+| `dropdownClassName`       | `ClassValue`          | Classes for the opened select/multiselect dropdown container.                                                                         |
+| `optionsClassName`        | `ClassValue`          | Classes for select/multiselect options, selected text, and selected tags.                                                             |
+| `errorPosition`           | `"top" \| "bottom"`   | Override error position for this specific field.                                                                                      |
+| `labelClassName`          | `ClassValue`          | Per-field label styling override.                                                                                                     |
+| `requiredClassName`       | `ClassValue`          | Per-field required asterisk override.                                                                                                 |
+| `errorClassName`          | `ClassValue`          | Per-field error text styling override.                                                                                                |
+| `focusClassName`          | `ClassValue`          | Per-field focus state override.                                                                                                       |
+| `passwordToggleClassName` | `ClassValue`          | Password toggle icon override.                                                                                                        |
+| `passwordToggle`          | `boolean`             | Enables show/hide password toggle.                                                                                                    |
+| `options`                 | `{ label, value }[]`  | Options for `checkbox`, `radio`, `select`, `multiselect`.                                                                             |
+| `showWhen`                | `ShowWhen`            | Conditional visibility: `{ field, equals }`.                                                                                          |
+
+For select and multiselect fields, use `dropdownClassName` and `optionsClassName` to style the opened menu and its options. Inline `style` is useful for trigger colors that must work without Tailwind-generated color classes:
 
 ```tsx
 {
@@ -568,19 +413,24 @@ For select and multiselect fields, use `dropdownClassName` and `optionsClassName
 
 `optionClassName` is retained as a deprecated alias for `optionsClassName`.
 
+### FormButton Schema Attributes
+
+| Attribute           | Type                                                  | Description                                                                            |
+| ------------------- | ----------------------------------------------------- | -------------------------------------------------------------------------------------- |
+| `name`              | `string`                                              | Button label text.                                                                     |
+| `type`              | `"submit" \| "reset" \| "cancel" \| "ok" \| "button"` | Button behavior type.                                                                  |
+| `className`         | `ClassValue`                                          | Tailwind layout classes (e.g. `w-full rounded-xl py-3`).                               |
+| `style`             | `React.CSSProperties`                                 | **✅ Inline CSS for button colors** — `{ backgroundColor: "#6366f1", color: "#fff" }`. |
+| `disabledClassName` | `ClassValue`                                          | Classes applied when disabled/submitting.                                              |
+| `loadingText`       | `string`                                              | Text shown with spinner during loading.                                                |
+| `onClick`           | `(data, e) => void \| Promise`                        | Click handler — receives current form data.                                            |
+| `toast`             | `ToastMessages`                                       | Button-level toast config.                                                             |
+
 ---
 
-## External Toast Libraries
+## External Toast Libraries Integration
 
-You can disable the built-in toast system and use your own notification library.
-
-Set:
-
-```tsx
-toast={false}
-```
-
-For example, with `react-hot-toast`:
+Set `toast={false}` to use your own notification library:
 
 ```tsx
 import toast from "react-hot-toast";
@@ -599,114 +449,9 @@ import toast from "react-hot-toast";
 />
 ```
 
-This allows React Form Toaster to handle the form while your application controls its own notification system.
-
 ---
 
-# Component Attributes & API Reference
-
-## Formbox Props
-
-| Prop                       | Type                             | Default    | Description                                                     |
-| -------------------------- | -------------------------------- | ---------- | --------------------------------------------------------------- |
-| `open`                     | `boolean`                        | `true`     | Controls form visibility.                                       |
-| `onOpenChange`             | `(open: boolean) => void`        | —          | Callback when open/close state changes.                         |
-| `mode`                     | `"modal" \| "inline"`            | `"modal"`  | Display mode: modal popup or inline embedded card.              |
-| `inline`                   | `boolean`                        | `false`    | Shorthand for `mode="inline"`.                                  |
-| `fields`                   | `FormField[]`                    | `[]`       | JSON array of field definitions.                                |
-| `buttons`                  | `FormButton[]`                   | `[]`       | JSON array of button definitions.                               |
-| `title`                    | `string \| { text, className? }` | —          | Form title heading.                                             |
-| `description`              | `string \| { text, className? }` | —          | Subtitle text below title.                                      |
-| `schema`                   | `z.ZodTypeAny`                   | —          | Zod schema for client-side validation.                          |
-| `onSubmit`                 | `(data) => void \| Promise`      | —          | Submit handler called on valid submission.                      |
-| `toast`                    | `boolean \| ToastMessages`       | `true`     | Built-in toast config, or `false` for external toast libraries. |
-| `containerClassName`       | `ClassValue`                     | —          | Outer card container Tailwind classes.                          |
-| `innerContainerClassName`  | `ClassValue`                     | —          | Inner form wrapper Tailwind classes.                            |
-| `buttonContainerClassName` | `ClassValue`                     | —          | Button row container classes.                                   |
-| `inputClassName`           | `ClassValue`                     | —          | Form-level default classes applied to all inputs.               |
-| `labelClassName`           | `ClassValue`                     | —          | Form-level default label styling.                               |
-| `requiredClassName`        | `ClassValue`                     | —          | Form-level required asterisk styling.                           |
-| `errorClassName`           | `ClassValue`                     | —          | Form-level validation error text styling.                       |
-| `errorPosition`            | `"top" \| "bottom"`              | `"top"`    | Where validation errors appear.                                 |
-| `focusClassName`           | `ClassValue`                     | —          | Form-level focus border/ring classes.                           |
-| `fieldWrapperClassName`    | `ClassValue`                     | —          | Form-level field row wrapper styling.                           |
-| `passwordToggleClassName`  | `ClassValue`                     | —          | Form-level password toggle icon styling.                        |
-| `closeFormIcon`            | `boolean`                        | modal mode | Show/hide the top-right close button.                           |
-
-## FormField Schema Attributes
-
-| Attribute                 | Type                  | Description                                                                                                                  |
-| ------------------------- | --------------------- | ---------------------------------------------------------------------------------------------------------------------------- |
-| `name`                    | `string`              | **Required.** Unique key matching the Zod schema key.                                                                        |
-| `type`                    | `string`              | `"text"`, `"email"`, `"password"`, `"number"`, `"checkbox"`, `"radio"`, `"select"`, `"multiselect"`, `"file"`, or `"array"`. |
-| `label`                   | `string`              | Label text above input.                                                                                                      |
-| `placeholder`             | `string`              | Placeholder text.                                                                                                            |
-| `required`                | `boolean`             | Shows required asterisk.                                                                                                     |
-| `className`               | `ClassValue`          | Tailwind layout classes for the input.                                                                                       |
-| `style`                   | `React.CSSProperties` | Inline CSS object for colors and borders.                                                                                    |
-| `dropdownClassName`       | `ClassValue`          | Classes for the opened select/multiselect dropdown.                                                                          |
-| `optionsClassName`        | `ClassValue`          | Classes for select/multiselect options, selected text, and selected tags.                                                    |
-| `errorPosition`           | `"top" \| "bottom"`   | Override error position for the specific field.                                                                              |
-| `labelClassName`          | `ClassValue`          | Per-field label styling override.                                                                                            |
-| `requiredClassName`       | `ClassValue`          | Per-field required asterisk override.                                                                                        |
-| `errorClassName`          | `ClassValue`          | Per-field error text styling override.                                                                                       |
-| `focusClassName`          | `ClassValue`          | Per-field focus state override.                                                                                              |
-| `passwordToggleClassName` | `ClassValue`          | Password toggle icon override.                                                                                               |
-| `passwordToggle`          | `boolean`             | Enables the show/hide password toggle.                                                                                       |
-| `options`                 | `{ label, value }[]`  | Options for checkbox, radio, select, and multiselect fields.                                                                 |
-| `showWhen`                | `ShowWhen`            | Conditional visibility: `{ field, equals }`.                                                                                 |
-
-## FormButton Schema Attributes
-
-| Attribute           | Type                                                  | Description                                    |
-| ------------------- | ----------------------------------------------------- | ---------------------------------------------- |
-| `name`              | `string`                                              | Button label text.                             |
-| `type`              | `"submit" \| "reset" \| "cancel" \| "ok" \| "button"` | Button behavior type.                          |
-| `className`         | `ClassValue`                                          | Tailwind layout classes.                       |
-| `style`             | `React.CSSProperties`                                 | Inline CSS for button colors and styling.      |
-| `disabledClassName` | `ClassValue`                                          | Classes applied when disabled or submitting.   |
-| `loadingText`       | `string`                                              | Text shown during loading.                     |
-| `onClick`           | `(data, e) => void \| Promise`                        | Click handler that receives current form data. |
-| `toast`             | `ToastMessages`                                       | Button-level toast configuration.              |
-
----
-
-## Common Use Cases
-
-React Form Toaster can be used for many types of React forms and workflows:
-
-* Registration forms
-* Login forms
-* Contact forms
-* Account creation forms
-* Profile forms
-* Checkout forms
-* Dynamic form builders
-* Zod validation forms
-* Settings forms
-* Onboarding forms
-* Confirmation dialogs
-* File upload forms
-* Conditional forms
-* Modal forms
-* Inline forms
-
----
-
-## Technology
-
-React Form Toaster is designed for modern React applications and supports:
-
-* React
-* TypeScript
-* Zod
-* Tailwind CSS utilities
-* JSON/schema-driven form configuration
-* React Hooks
-
----
-
-## Contributing
+## Contribute
 
 ### ❤️ Like This Project?
 
